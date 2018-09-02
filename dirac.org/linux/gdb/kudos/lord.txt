@@ -1,0 +1,29 @@
+From mlord@MaPsOn.pobox.com  Fri Jan 21 11:12:57 2005
+Date: Fri, 21 Jan 2005 11:10:15 -0500
+From: Mark Lord <mlord@pobox.MaPsOn.com>
+Organization: Real-Time Remedies Inc.
+To: p@dirac.org.MaPsOn
+Subject: "Using GNU's GDB Debugger"
+
+Hi,
+
+I would like to use your GDB guide (http://www.dirac.org/linux/gdb/)
+as the basis for a GDB tutorial I will be instructing a few times
+this year.
+
+It would be really nice to have a printable version of it,
+but the HTML link for that does not work for me.
+
+So, if you can part with a current copy in printable form,
+I'd really appreciate it.  Odds are good that any feedback
+received from the tutorial sessions will be fed back to you
+(from me) for further improvements.
+
+Please let me know, one way or another, today if possible
+
+Cheers
+--
+Mark Lord
+(the original Linux "IDE guy")
+Real-Time Remedies Inc.
+mlord@pobox.com.MaPsOn

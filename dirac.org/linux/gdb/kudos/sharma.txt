@@ -1,0 +1,14 @@
+From: Abhishek Sharma <abhishek@MaPsOnenl.usc.edu>
+Date: Wed, 21 Jun 2006 10:16:11 -0400
+To: p@dirac.mApSoNorg
+Subject: GDB tutorial
+
+Hi Peter,
+
+I am a graduate student in Computer Science at University of Southern 
+California. I found your GDB tutorial very helpful and have added the 
+url to my webpage (http://enl.usc.edu/~abhishek).
+
+Good luck with google!!!
+
+Abhishek

@@ -1,0 +1,127 @@
+From hgfernan@lsi.MaPsOn.usp.br  Tue Aug  2 11:06:55 2005
+Date: Tue, 2 Aug 2005 15:14:52 -0000
+To: "Peter Jay Salzman" <p@mApSoN.dirac.org>
+Subject: Re: Interest in gdb documentation
+From:  <hgfernan@lsi.usp.MaPsOn.br>
+
+Hello Peter,
+
+thanks for one more nice and informative text. 
+
+Sorry for not answering sooner. We've got a tough course to give, one in
+which your gdb documentation gave a good help.
+
+Concerning your question of why LaTeX, the answer is: your material is so
+nice and deep that it would be interesting to have it printed -- i guess
+webpages are better for short texts.
+
+Since printing HTML is (at least for me :(( ) a lottery, could you please
+suggest a browser (or any other tool) that produces good printed pages
+when applied to your documentation ?
+
+Best regards,
+Hilton
+
+P.S.: please follow me in our intercultural moment. :)
+
+My grandparents were from Spain, so  "hola" really applies to me. 
+However, in Brazil people speaks Portuguese and we´re not as familiar to
+Spanish as we should.  Unfortunately, that includes myself: my Spanish is
+very rudimentar, more like Portunol; our analog to Spanglish here. :)
+
+The informal compliments here are "Oi", similar to "hi"; or "Ola'!", a
+literal translation of "Hello!"  More modern compliments can also be "E
+ai'!", that we can think of as similar to "what's up?" That if Bugs Buny
+is still modern. :) A really modern spelling would be "E ae?" -- that's
+the one teenage bloggers use.
+
+That ends (this is a promise :))) our intercultural moment.
+
+
+
+On 7/25/05, Peter Jay Salzman <p@dirac.org> wrote:
+> Hola Hilton,
+> 
+> On Mon 25 Jul 05,  3:30 AM, hgfernan@lsi.usp.br <hgfernan@lsi.usp.br> said:
+> > Hello!
+> >
+> > First of all thanks a lot for your many interesting, clear and complete
+> > documentation.
+> >
+> > I'm from Univ S. Paulo, Brazil, and I agree: yours is the most complete
+> > GDB available in the .Net.
+> 
+> My pleasure!  I'm glad you find it useful.  Those pages were written out of
+> my own frustration in lack of comprehensive GDB tutorial.  I spent a looong
+> time writing it.
+> 
+> > For me it's more like a book, than some webpages.  So, if you don't mind,
+> > i think many of your readers would benefit from having it printed.
+> >
+> > So, my question is: do you have your GDB doc available in, say, SGML's
+> > DocBook ? Maybe it was written in LaTeX ?
+> >
+> > If you wrote it directly as HTML, i'd like to ask you permission to
+> > convert it to LaTeX, that i'm more acquainted to.
+> 
+> It was written directly directly in HTML.  I specifically chose HTML over
+> other forms for a few reasons.
+> 
+> First of all, my favorite method of writing is LaTeX.  I use LaTeX for
+> everything from resumes to letters (actually, I can't stand OpenOffice).
+> 
+> However, I chose NOT to use LaTeX for a few reasons.  The number one reason
+> is hyperlinking.  I use hyperlinking for a few reasons:
+> 
+> 1. Sample code
+> 2. Optional exercises to help facilitate learning.
+> 3. Mandatory exercises to illustrate concepts that I didn't want to spell
+>    out for the reader (sometimes, figuring stuff out on your own is the best
+>    way to learn).
+> 4. Definition of CS terms that would be too far left field to define.
+>    Wikipedia is GREAT for that.
+> 
+> With a LaTeX document, you typically get a postscript, pdf, or dvi file.
+> Hyperlinking is useless in ps and dvi.  And frankly, I have more control
+> with PHP/CSS than with LaTeX.  Thus, LaTeX was ruled out.  I really had a
+> more interactive tutorial in mind, so HTML really seemed to be the best
+> choice.  Besides, I think latex2html is really ugly.
+> 
+> As for SGML, well, I love the concept of SGML.  However, the reality is that
+> writing is painful in it.  I've written 3 documents for TLDP (Linux Gamers
+> Howto, Debian Jigdo Howto and Linux Kernel Module Programming Guide
+> (LKMPG)).  I find myself concentrating more on Docbook than on the actual
+> content.  The paradox of SGML is that it "frees" the author from markup.
+> But like Java, it doesn't fulfill its promise.  The author is obligated to
+> compose text in a very convoluted, verbose and overly strict manner.
+> 
+> As long as my GDB pages weren't going to be LDP documents, there was no way
+> in HECK I was going to use Docbook.  :)   Note that the LKMPG was originally
+> written in latex.  LDP told me that they would NOT accept latex submissions
+> any longer, so to keep that document current, I hate to convert it to
+> Docbook.  What a waste of 3 days...
+> 
+> Anyhow, I think my GDB pages would lose some of what makes them so special
+> and unique in printed form.  You can convert them to LaTeX if you like, but
+> realize two things:
+> 
+> 1. I do feel like the reader would be losing something by not having links
+>    to external information.
+> 
+> 2. The pages are under ACTIVE development.  Sometimes they change daily,
+>    sometimes weekly.  The LaTeX source would quickly be out of date, and I
+>    suspect that any "maintainer" would quickly get bored trying to keep his
+>    version current with the web pages.
+> 
+> So, I don't recommend it, but you can certainly convert to LaTeX if you
+> like!  However, the only reason I can think of that would make LaTeX
+> plausible would be for people who don't have access to the web!
+> 
+> If you don't mind, could you tell me the reason behind converting from HTML
+> to a different format?  Perhaps if I understood the problem better, I'd be
+> able to recommend a better alternative.
+> 
+> Sincerely,
+> Pete
+> 
+> 

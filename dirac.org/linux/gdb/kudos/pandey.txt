@@ -1,0 +1,36 @@
+From vihanpandey@MaPsOn.gmail.com  Mon May  1 15:36:54 2006
+Date: Tue, 2 May 2006 01:08:26 +0530
+From: Vihan Pandey <vihanpandey@gmail.MaPsOn.com>
+To: Peter Jay Salzman <p@MaPsOn.dirac.org>
+Subject: Great Tutorial!
+
+   Hello,
+
+            My name is Vihan and i'm a final year IT engineering student in
+   Mumbai, India. i was just going through your article on GDB and i have to
+   say it is ABSOLUTELY FABULOUS! i especially like the fact that you took so
+   much pain to explain so many operating system concepts and teaching their
+   practical relevance with respect to GDB. In fact i'm going to cite you and
+   your GDB tutorial in my references section of a document i'm currently
+   writing. Incidently its being written in LaTeX, i'm a LaTeX fan too!
+
+   After visiting your GDB page i checked out other stuff on dirac.org very
+   impressive stuff you certainly are a man of many talents :-)
+
+   There is something i do wish to tell you which you may like - one pizza
+   lover to another. i visited Italy about 8 years ago and they server
+   pizza's both  on a pan(the conventional way) and as a roll, i.e they just
+   make a small pizza roll it up, put a tissue around it and give it you.
+   Another interesting thing is that in Italy they do not consider pizza as
+   junk food. In fact they classify it as a gourmet meal - something classy
+   and sophisticated. i haven't seen this anywhere else in the world not in
+   Asia, Europe or Australia. Unfortunately i did not take any pictures of
+   the pizza itself, if see such a sight again i will certainly forward the
+   pictures to you. :-)
+
+   Keep up the good work!
+
+   Regards,
+
+   - vihan
+

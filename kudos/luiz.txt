@@ -1,0 +1,31 @@
+From fabio.doreto@MaPsOn.gmail.com  Fri Jul 22 13:16:02 2005
+Date: Fri, 22 Jul 2005 14:19:12 -0300
+From: Fabio Luiz Doreto Rodrigues <fabio.mApSoN.doreto@gmail.com>
+To: p@dirac.org.MaPsOn
+Subject: Debugging With GDB HOWTO (LDP)
+
+Hi Mr. Salzman,
+
+I was seeking for a document in The Linux Documentation Project about
+debugging with gdb. After a good look in the guides directory and in
+the HOWTO's, I realized that there was no good document.
+
+After some googlin' I found your document (Using GNU's GDB Debugger)
+and found it very enlightening. I think it's a shame that this kind of
+document doesn't exist in the Linux Documentation Project.
+
+But in the free world, does who doesn't have initiative doesn't enjoy
+the freedom. Based on that, I'm thinking in adapting your text to fit
+in a "Debugging With GDB HOWTO". The credits would be all yours, I was
+just going to adapt the text to their model.
+
+Please tell me what you think about this idea. I'm working to increase
+the amount of documents about development int the LDP, most HOWTOs are
+configuration tips, and I think there should be more documentation
+helping people to start developing for the community. If you know or
+have other documents (GPL of course) in this area please let me know.
+
+Thank You for your time and patience,
+
+Fábio Luiz
+(Sao Paulo, Brazil)

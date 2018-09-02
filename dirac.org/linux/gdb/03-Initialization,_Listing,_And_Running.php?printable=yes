@@ -1,0 +1,534 @@
+<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+<!-- Code listing: 5 spaces                                                                      -->
+<!-- TODO: listing overloaded functions -->
+
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html lang="en">
+	<head>
+	<title>Peter's gdb Tutorial: Initialization, Listing, And Running </title>
+	<link rel=STYLESHEET type="text/css" href="./inclusions/style.css" title="Style" />
+	</head>
+	<body>
+
+	<h1>Using GNU's GDB Debugger: Initialization, Listing, And Running</h1><h4>By Peter Jay Salzman</h4><hr /><table width="100%"><tr><td align="left">Previous: <a href="02b-Debugging_With_Your_Brain.php">Debugging With Your Brain</a></td><td align="right">Next: <a href="04-Breakpoints_And_Watchpoints.php">Breakpoints And Watchpoints</a></td></tr></table><hr />
+
+
+<br /><br /><a name="wherearewenow"><h2>Where Are We Now?</h2></a>
+
+<p>In the last chapter we learned about an executing process's memory layout which is divided into
+segments.  One important segment is the <i>call stack</i> (or <i>stack</i>), which is a collection
+of <i>stack frames</i> (or <i>frames</i>).  There is one frame for each function call, and the frame
+holds three important things:</p>
+
+<ol>
+<li>The local variables for the function.</li>
+<li>The current address pointer within the function.</li>
+<li>The arguments passed to the function.</li>
+</ol>
+
+<p>When a function is called, a new frame is allocated and added to the stack.  When the function
+returns, its frame is returned back to unused stack memory and execution resumes at the address
+pointed to by the previous function's current address pointer.  We can ask GDB to tell us what the
+stack looks like with the <tt>backtrace</tt> command.  We can also find out which frame GDB's
+context is in using the <tt>frame</tt> command.  Lastly, we can change GDB's context to the
+<tt>n</tt>'th frame using the <tt>frame n</tt> command.</p>
+
+<p>Executables don't contain references to object (function and variable) names or source code line
+numbers.  It would be painful to debug a program without these things, so to debug a program, we
+generate an augmented symbol table using gcc's <tt>-g</tt> option.</p>
+
+<p>Lastly, we briefly learned how to make GDB pause execution using the <tt>break</tt> command and
+execute one line of source code using the <tt>step</tt> command.  We'll have much more to say about
+these commands shortly.</p>
+
+
+
+
+
+
+<br /><br /><a name="wherearewegoingtogo"><h2>Where Are We Going To Go?</h2></a>
+
+<p>In this chapter, we'll investigate the <tt>list</tt> command which (surprisingly) lists lines of
+source code.  We'll take an in-depth look at GDB's initialization file <b>.gdbinit</b>.  Lastly,
+we'll look at GDB's <tt>run</tt> command which executes a program from within GDB.</p>
+
+
+
+
+
+<br /><br /><a name="basiclistingofsourcecode"><h2>Basic Listing of Source Code</h2></a>
+
+<p>Download <b>derivative</b>, a program that calculates numerical derivatives, to follow along with
+the discussion: <a href="./code/03/derivative/broken/derivative.tar.bz2">derivative.tar.bz2</a>.  Take a moment to familiarize
+yourself with the code.  Note the use of groovy function pointers.</p>
+
+<p>You can list source code with GDB's <tt>list</tt> command, abbreviated by <tt>l</tt>.  Run GDB on
+the executable and use the <tt>list</tt> command:</p>
+
+<pre class="demo">
+$ gdb driver
+(gdb) list
+12    }
+13
+14
+15
+16    int main(int argc, char *argv[])
+17    {
+18        double x, dx, ans;
+19        double Forw, ForwDelta, Cent, CentDelta, Extr, ExtrDelta;
+20
+21        if (argc != 1) {
+</pre>
+
+<p>By default, GDB always lists 10 lines of source code.  When you first issue <tt>list</tt>, GDB
+lists 10 lines of source code centred on <tt>main()</tt>.  Subsequent use of <tt>list</tt> gives the
+next 10 lines of source code.  Try it:</p>
+
+
+<pre class="demo">
+(gdb) list
+22        printf("You must supply a value for the derivative location!\n");
+23        return EXIT_FAILURE;
+24    }
+25
+26    x   = atol(argv[1]);
+27    ans = sin(log(x)) / x;
+28
+29    printf("%23s%10s%10s%11s%10s%11s\n", "Forward", "error", "Central",
+30        "error", "Extrap", "error");
+31
+(gdb) 
+</pre>
+
+<p>Use <tt>list</tt> three more times, and you'll see:</p>
+
+<pre class="demo">
+     ... <i>output suppressed</i>
+
+45            printf("dx=%e: %.5e %.4f  %.5e %.4f  %.5e %.4f\n",
+46                dx, Forw, ForwDelta, Cent, CentDelta, Extr, ExtrDelta);
+47        }
+48  
+49        return 0;
+50    }
+(gdb) list
+Line number 51 out of range; driver.c has 50 lines.
+(gdb) 
+</pre>
+
+<p>The second time we used <tt>list</tt>, only 9 lines were printed, since we reached the end of the
+file.  The final <tt>list</tt> didn't print any lines.  That's because <tt>list</tt> always prints
+10 lines of code <I>after</I> the previously listed lines.  There were simply no more lines of code
+to list.</p>
+
+<p>"<tt>list -</tt>" works like <tt>list</tt>, except in reverse.  It lists the 10 lines
+<i>previous</i> to the last listed lines.  Since line 50 was the last listed line, <tt>list
+-</tt>should print lines 41 through 50:</p>
+
+<pre class="demo">
+(gdb) list -
+41
+42                Extr      = ExtrapolatedDiff(x, dx, &amp;f);
+43                ExtrDelta = fabs(Extr - ans);
+44
+45                printf("dx=%e: %.5e %.4f  %.5e %.4f  %.5e %.4f\n",
+46                    dx, Forw, ForwDelta, Cent, CentDelta, Extr, ExtrDelta);
+47            }
+48
+49        return 0;
+50    }
+(gdb)
+</pre>
+
+<p>If you give <tt>list</tt> a line number, GDB lists 10 lines centered on that line number:</p>
+
+<pre class="demo">
+(gdb) list 13
+8
+9      double f(double x)
+10     {
+11          return cos(log(x));
+12     }
+13
+14
+15
+16     int main(int argc, char *argv[])
+17     {
+(gdb)
+</pre>
+
+<p>I'm going to suppress the output to conserve space, however I strongly encourage you to follow
+along with my examples by performing the operations in GDB yourself.  Try to imagine what the output
+looks like before you actually perform the operation.</p>
+
+<p>Other listing operations you'll find useful:</p>
+
+<table style="margin-left: 10ex;">
+<tr>
+<td>starting with some line number</td><td><tt>(gdb) list 5,                      </tt></td>
+</tr><tr>
+<td>ending with some line number  </td><td><tt>(gdb) list ,28                     </tt></td>
+</tr><tr>
+<td>between two numbers:          </td><td><tt>(gdb) list 21,25                   </tt></td>
+</tr><tr>
+<td>by function name:             </td><td><tt>(gdb) list f                       </tt></td>
+</tr><tr>
+<td>functions in the other file:  </td><td><tt>(gdb) list CentralDiff             </tt></td>
+</tr><tr>
+<td>by filename and line number:  </td><td><tt>(gdb) list derivative.c:12         </tt></td>
+</tr><tr>
+<td>filename and function name:   </td><td><tt>(gdb) list derivative.c:ForwardDiff</tt></td>
+</tr>
+</table>
+
+<p><tt>list</tt> has a "memory" of what file was list used to print source code.  We started out by
+listing lines from <b>driver.c</b>.  We then switched to <b>derivative.c</b> by telling GDB to list
+<tt>CentralDiff()</tt>.  So now, <tt>list</tt> is in the "context" of <tt>derivative.c</tt>.
+Therefore, if we use <tt>list</tt> by itself again, it'll list lines lines from
+<b>derivative.c</b>.</p>
+
+<pre class="demo">
+(gdb) list
+11    }
+12
+13
+14
+15     double ExtrapolatedDiff( double x, double dx, double (*f)(double) )
+16     {
+17         double term1 = 8.0 * ( f(x + dx/4.0) - f(x - dx/4.0) );
+18         double term2 = ( f(x + dx/2.0) - f(x - dx/2.0) );
+19
+20         return (term1 - term2) / (3.0*dx);
+</pre>
+
+<p>But what if we wanted to start listing lines from <b>driver.c</b> again?  How do we go back to
+that file?  We simply <tt>list</tt> anything that lives in <b>driver.c</b>, like a function or line
+number.  All these commands will reset <tt>list</tt>'s command context from <b>derivative.c</b> back
+to <b>driver.c</b>:</p>
+
+<pre class="demo">
+   list main
+   list f
+   list driver.c:main
+   list driver.c:f
+   list driver.c:20
+</pre>
+
+<p>And so forth.  The rules aren't complicated; you'll get the hang of them after debugging a few
+multi-file programs.</p>
+
+
+
+
+<a name="listingbymemoryaddress(advanced)"><h3>Listing By Memory Address (advanced)</h3></a>
+
+<p>Every function begins at some memory address.  You can find this address with the <tt>print</tt>
+function (which we'll cover later).  For instance, we'll find the address for <tt>main()</tt>:</p>
+
+<pre class="demo">
+(gdb) print *main
+$1 = {int (int, char **)} 0x8048647 &lt;main&gt;
+(gdb)
+</pre>
+
+<p>So <tt>main()</tt> lives at <tt>0x8048647</tt>.  We can use <tt>list</tt> using memory locations
+as well; the syntax is very C'ish:</p>
+
+<pre class="demo">
+(gdb) list *0x8048647
+0x8048647 is in main (driver.c:17).
+12     }
+13
+14
+15
+16     int main(int argc, char *argv[])
+17     {
+18          double x, dx, ans;
+19          double Forw, ForwDelta, Cent, CentDelta, Extr, ExtrDelta;
+20
+21          if (argc != 1) {
+(gdb)
+</pre>
+
+<p>It stands to reason that <tt>0x8048690</tt> is also somewhere inside of <tt>main()</tt>.  Let's
+find out:</p>
+
+<pre class="demo">
+(gdb) list *0x8048690
+0x8048690 is in main (driver.c:26).
+21          if (argc != 1) {
+22               printf("You must supply a value for the derivative location!\n");
+23               return EXIT_FAILURE;
+24          }
+25
+26          x   = atol(argv[1]);
+27          ans = sin(log(x)) / x;
+28
+29          printf("%23s%10s%10s%11s%10s%11s\n", "Forward", "error", "Central",
+30               "error", "Extrap", "error");
+(gdb)
+</pre>
+
+
+
+
+<h4 class="exercise">Exercises</h4><ol class="exercise"><li>Using <tt>list</tt> and <tt>print *</tt>, figure out how many machine instructions are used for
+this line of code:
+
+<pre>
+18          double x, dx, ans;
+19          double Forw, ForwDelta, Cent, CentDelta, Extr, ExtrDelta;
+</pre>
+Think about this for a second; you'll learn a bit about compilers and machine instructions.</li>
+</ol>
+<!--
+Answer:
+
+Using trial and error, I found that listing any address inclusively between 0x8048678 and 0x8048686
+displays these two lines of code.  Their difference is 0xE, or 14 bytes (which isn't the storage
+space; it's the request for storage space).  Note that this is a crude approximation.
+
+It's interesting that you can't list line 19 without listing line 18 as well.  This suggests that
+GDB sees the two lines of source as being one line of "code".  This is gcc's doing.
+-->
+</ol>
+
+
+
+
+
+<a name="settingthelistsize"><h3>Setting The List Size</h3></a>
+
+<p>GDB lists code in increments of 10 lines.  Maybe that's too much.  Or maybe that's too little.
+You can tell GDB to change the listing size with the <tt>set</tt> command and <tt>listsize</tt>
+variable:</p>
+
+<pre class="demo">
+(gdb) set listsize 5
+(gdb) list main
+15
+16     int main(int argc, char *argv[])
+17     {
+18          double x, dx, ans;
+19          double Forw, ForwDelta, Cent, CentDelta, Extr, ExtrDelta;
+(gdb)
+</pre>
+
+
+
+<h4 class="exercise">Exercises</h4><ol class="exercise"><li>There's actually a <i>lot</i> of things you can <tt>set</tt>.  Issue <tt>help set</tt> from
+	GDB's prompt.  I'm not expecting you to read it all---I just want you to marvel at how big the
+	list is!</li>
+</ol>
+
+
+
+
+
+
+<br /><br /><a name="the<b>.gdbinit</b>file"><h2>The <b>.gdbinit</b> File</h2></a>
+
+<p>Upon startup, GDB reads and executes an initialization file named <b>.gdbinit</b>.  It can
+contain any command (eg <tt>set</tt> and <tt>break</tt>), and more.  For example, "<tt>set
+listsize</tt>" and "<tt>set prompt</tt>" can go into <b>.gdbinit</b>.  There are two locations where
+GDB will look for this file (in order):</p>
+
+<ol>
+<li>In your home directory</li>
+<li>In the current directory</li>
+</ol>
+
+<p>You can put commands to be executed for <i>all</i> your programming projects in
+<b>$HOME/.gdbinit</b> and project-specific commands in <b>$PWD/.gdbinit</b>.</p>
+
+<p>You can comment your <b>.gdbinit</b> files with bash's "#".  And blank lines, of course, are ignored.</p>
+
+
+<h4 class="exercise">Exercises</h4><ol class="exercise"><li>When you invoke GDB, it prints a copyright notice.  Using GDB's man page, figure out how to
+	prevent GDB from printing this notice.  Using your shell's alias feature, make an alias for "gdb"
+	that invokes GDB, but surpresses the copyright notice.  I use this alias myself.</li>
+<li>Figure out how to reset GDB's prompt from <tt>(gdb)</tt> to something that tickles your fancy.
+	Google would be a great way of figuring this out.  GDB's help utility would also be useful
+	(hint: you want to "set" the prompt to something else).  Modify <b>.gdbinit</b> so that GDB uses
+	your chosen prompt on startup.</li>
+<li>You can even use terminal escape codes to put color in your GDB prompt!  If you don't know about
+	terminal color escape codes, you can read about them <a href="http://www-106.ibm.com/developerworks/library/l-tip-prompt">here</a>.  One caveat: You have to use
+	the octal code <tt>\033</tt> for the escape character.  So for example, bold blue would be
+	<tt>\033[01;34m</tt>.  And then don't forget to turn the blue off, otherwise <i>everything</i>
+	will be blue.  I'll let you figure out how to do that yourself!  Thanks to Jeff Terrell for
+	pointing this out to me!</li>
+</ol>
+
+
+
+<a name="acaveatforcoloredgdbprompts"><h3>A Caveat for Colored GDB Prompts </h3></a>
+<i>Thanks Eric Rannaud</i>
+
+<p>According to the GDB documentation <i>binutils-gdb/readline/doc/rltech.texi</i> that comes with
+the GDB source code:</p>
+
+<blockquote>
+Applications may indicate that the prompt contains characters that take
+up no physical screen space when displayed by bracketing a sequence of
+such characters with the special markers @code{RL_PROMPT_START_IGNORE}
+and @code{RL_PROMPT_END_IGNORE} (declared in @file{readline.h}.  This may
+be used to embed terminal-specific escape sequences in prompts.
+
+<pre>
+PROMPT_START_IGNORE is defined to \001
+PROMPT_END_IGNORE is defined to \002
+</pre>
+</blockquote>
+
+<p>Without these characters, at least with xterm, the cursor is not always in the right place when
+using backspace, as gdb includes the terminal escape codes in its computation of the visible length
+of the prompt, which is wrong. With a simple colored "(gdb) " prompt, gdb thinks its length is 17,
+instead of 6.</p>
+
+<p>The fix is simple:</p>
+
+<pre>
+set prompt \001\033[1;32m\002(gdb)\001\033[0m\002\040
+</pre>
+
+<p>The \040 is just a space -- better to escape it than to have to copy and paste a trailing blank space.</p>
+
+
+
+
+
+
+
+
+
+<a name="gdbinitonmswindows"><h3>gdbinit on MS  Windows</h3></a>
+<i>Thanks Ted Alves</i>
+
+<p>The environment variable <tt>HOME</tt>, used by .gdbinit, is not normally defined in Windows. You
+must set/define it yourself: (you must be logged in as an Administrator to change the system
+variables) right-click My Computer, left-click Properties, left-click the Advanced tab, left-click
+the Environment Variables button. Now add New: HOME: "(your chosen path) c:\documents and
+settings\username" (without the double-quotes) and save it by clicking OK. Type "set" after
+rebooting to verify that it's there.  You can also type "<tt>set HOME=(your chosen path)</tt>" to
+set it before rebooting, but this method isn't permanent.</p>
+
+<p>Windows <i>Explorer</i> will not accept (create) a file named ".gdbinit" but Windows itself has
+no problem with it. Create a file named something like: <tt>gdb.init</tt> in your <tt>%HOME%</tt>
+directory, then go to command-line and type "<tt>move gdb.init .gdbinit</tt>". This will create the
+file and Explorer will now work with it.  You might want to copy this (empty) file to your intended
+working directory(ies) before you edit in your commands for the <tt>HOME</tt> file.</p>
+
+
+
+
+
+
+<br /><br /><a name="runningaprogramingdb"><h2>Running A Program In GDB</h2></a>
+
+<p>Let's properly introduce the <tt>run</tt> command.  Download and compile <a href="./code/03/arguments/arguments.tar.bz2">arguments.tar.bz2</a>.</p>
+
+<p>The <tt>run</tt> command with no arguments runs your program without command line arguments.  If
+you want to give the program arguments, use the <tt>run</tt> command with whatever arguments you
+want to pass to the program:</p>
+
+<pre class="demo">
+   $ gdb arguments
+   (gdb) run 1 2
+   Starting program: try2 1 2
+   Argument 0: arguments
+   Argument 1: 1
+   Argument 2: 2
+   
+   Program exited normally.
+   (gdb)
+</pre>
+
+<p>Nothing could be simpler.  From now on, whenever you use <tt>run</tt> again, it'll automatically
+use the arguments you just used (ie, "1 2"):</p>
+
+<pre class="demo">
+   (gdb) run
+   Starting program: arguments 1 2
+   Argument 0: arguments
+   Argument 1: 1
+   Argument 2: 2
+   
+   Program exited normally.
+   (gdb)
+</pre>
+
+<p>until you tell it to use different arguments:</p>
+
+<pre class="demo">
+   (gdb) run testing one two three
+   Starting program: arguments testing one two three
+   Argument 0: testing
+   Argument 1: one
+   Argument 2: two
+   Argument 3: three
+   
+   Program exited normally.
+   (gdb)
+</pre>
+
+<p>Suppose you want to run the program without command line arguments?  How do you get <tt>run</tt>
+to stop automatically passing them?  There's a "<tt>set args</tt>" command.  If you give this
+command without any parameters, <tt>run</tt> will no longer automatically pass command line
+arguments to the program:</p>
+
+<pre class="demo">
+   (gdb) set args
+   (gdb) run
+   Starting program: arguments 
+   Argument 0: try2
+   
+   Program exited normally.
+   (gdb)
+</pre>
+
+<p>If you <I>do</I> give an argument to <tt>set args</tt>, those arguments will be passed to the
+program the next time you use <tt>run</tt>, just as if you had given those arguments directly to
+<tt>run</tt>.</p>
+
+<p>There's one more use for <tt>set args</tt>.  If you intend on passing the same arguments to a
+program every time you begin a debugging session, you can put it in your <b>.gdbinit</b> file.  This
+will make <tt>run</tt> pass your arguments to the program without you having to specify them every
+time you start GDB on a given project.</p>
+
+
+
+
+
+
+
+
+<br /><br /><a name="restartingaprogramingdb"><h2>Restarting A Program In GDB</h2></a>
+
+<p>Sometimes you'll want to re-start a program in GDB from the beginning.  One reason why you'd want
+to do this is if you find that the breakpoint you set is too late in the program execution and you
+want to set the breakpoint earlier.  There are three ways of restarting a program in GDB.</p>
+
+<ol>
+<li>Quit GDB and start over.</li>
+<li>Use the <tt>kill</tt> command to stop the program, and <tt>run</tt> to restart it.</li>
+<li>Use the GDB command <tt>run</tt>.  GDB will tell you the program is already running and ask if
+	you want to re-run the program from the beginning.</li>
+</ol>
+
+<p>The last two options will leave everything intact: breakpoints, watchpoints, commands,
+convenience variables, etc.  However, if you don't mind starting fresh with nothing saved from your
+previous debugging session, quitting GDB is certainly an option.</p>
+
+<p>You might be wondering why there's a <tt>kill</tt> command when you can either quit GDB with
+<tt>quit</tt> or re-run the program with <tt>run</tt>.  The <tt>kill</tt> command seems kind of
+superfluous.  There are some reasons why you'd use this command, and you can read about them <a href="http://www.slac.stanford.edu/comp/unix/package/rtems/doc/html/gdb/gdb.info.Kill_Process.html">here</a>.  Thanks to Suresh Babu for
+pointing out that the <tt>kill</tt> command may also be useful when you are remote debugging or if a
+process is debugged via the <tt>attach</tt> command.  That said, I've never used <tt>kill</tt>
+myself.</p>
+
+
+
+	<br />
+	</body>
+	</html>

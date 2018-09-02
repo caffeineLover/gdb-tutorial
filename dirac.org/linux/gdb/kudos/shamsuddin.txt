@@ -1,0 +1,34 @@
+From rayees@MaPsOn.yahoo.com  Mon Aug 29 16:10:53 2005
+Date: Mon, 29 Aug 2005 13:16:52 -0700 (PDT)
+From: Rayees S <rayees@yahoo.MaPsOn.com>
+Subject: Great Job
+To: p@dirac.MaPsOn.org
+
+Peter,
+
+Thanks a lot for the awesome gdb tutorial. I just started reading it
+yesterday and it is very interesting. I am thoroughly enjoying it. Thanks for
+taking the time to write it.
+
+I had a couple of comments.
+
+1. The questions in the exercises were very useful. Do you have the answers
+   somewhere so that I can check if I did right.
+
+2. The stack frames section displayed storage space for two int's in the
+   frame for the second_function(), even though there was only one integer
+   variable in the function. I would have thought that only space for 1
+   integer need be allocated.
+
+Please let me know your thoughts when you get a chance.
+
+Thanks a lot
+Rayees Shamsuddin
+
+
+
++-------------------------------------------------------------------------+
+Peter's note:
+1. Unfortunately, I don't have answers written down.  It's on my TODO list.
+2. Yep, you found a mistake.  It has been corrected.  Thanks!!!
++-------------------------------------------------------------------------+

@@ -1,0 +1,45 @@
+From scharan20@gmail.MaPsOn.com  Thu Apr 20 12:38:16 2006
+Date: Thu, 20 Apr 2006 22:02:28 +0530
+From: Sri Charan <scharan20@MaPsOn.gmail.com>
+To: p@.MaPsOn.dirac.org
+Subject: GDB Tutorial Corrections and Suggestions
+
+   Sir,
+   At the outset let me thank you for the amazing tutorial that you have
+   written. I have been using it for teaching and learning GDB for over two
+   years now. When I first came across it, it was in my college (local)
+   web-site where they had directed us to your tutorial on the web, and had
+   an old cached copy here on our site. Some time later I needed to access it
+   and had only the web to look to. Then, I came to the official site and
+   found that it has been upgraded both in terms of looks and contents!
+
+   One suggestion is why dont you keep a tar or zip file so that people can
+   download your tutorial and use it offline?
+
+   By the way, now, my blog has a link to your amazing tutorial. My blog is
+   at http://sricharan-log.blogspot.com
+   The link to the post regarding your tutorial and other useful links is at
+   http://sricharan-log.blogspot.com/2006/04/best-gdb-tutorial.html
+   Keep up the yoemen work, sir.
+
+   Here are some of the observations I made while going through the latest
+   version of the tutorial. It took me two days to go through most of this. I
+   did not go through the Ncurses section in great detail though. You can
+   find the detalied list of corrections that came to my notice in the text
+   file attached with the mail.
+
+   Thanking you once again.
+
+   --
+   Regards,
+   Sri Charan K.
+
+
+
+
++--------------------------------------------------------------------+
+Peter's Note:
+
+Many excellent typo and technical corrections follow.  Sri spent a LOT
+of time sending them to me.  Thanks Sri!!!   :-)
++--------------------------------------------------------------------+

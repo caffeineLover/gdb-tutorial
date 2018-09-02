@@ -1,0 +1,31 @@
+From getram22@MaPsOn.gmail.com  Thu Mar  3 21:17:53 2005
+Date: Fri, 4 Mar 2005 10:17:51 +0800
+From: R k <getram22@gmail.MaPsOn.com>
+To: MaPsOn.p@dirac.org
+Subject: GDB missing links
+
+Hi Peter Jay Salzman,
+
+Sir, I was reading the document at http://www.dirac.org/linux/gdb/
+I find missing links for some the source C example in the document.
+
+I am Just a novice in programming and with physics background.
+I would like to make the document more user friendly for practical usage
+but would take some time to get some good understanding of things
+running.
+
+Regards
+Ram
+--------------------------------------------------------------------------------
+List of Missing links :
+http://www.dirac.org/linux/gdb/code/try5.c
+http://www.dirac.org/linux/gdb/code/running_process.c
+--------------------------------------------------------------------------------
+
+
+
+
++-----------------------------------+
+Peter's Note:
+Missing links are now fixed.  Thanks!
++-----------------------------------+
