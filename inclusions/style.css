@@ -82,9 +82,17 @@ table {
 */
 
 .site-body h2 {
-	color: orange;
+	color: #870000;
 	font-size: 2em;
 	margin-bottom: .5em;
+    margin-left: 10px;
+}
+
+.site-body h3 {
+    color: #870000;
+    font-size: 1.4em;
+    margin-bottom: .5em;
+    margin-left: 18px;
 }
 
 p {
@@ -92,13 +100,15 @@ p {
 	font-size: 1.1em;
 	line-height: 1em;
 	margin: 20px 0 15px 22px;
+    width: 80%;
 }
 
 li {
 	font-family: 'Roboto', sans-serif;
 	font-size: 1.1em;
-	list-style: square;
+    list-style: disc;
 	margin: 5px 0 15px 40px;
+    width: 80%;
 }
 
 .site-body {
@@ -116,4 +126,6 @@ code {
 	background: #e0e0e0;
 	color: black;
 }
+
+
 

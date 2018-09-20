@@ -1,18 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf=8">
+	<meta charset="utf-8">
 	<meta name="viewport" content="width-device-width, initial-scale=1, shrink-to-fit=no">
 	<title>Peter's gdb Tutorial: Table Of Contents </title>
 	<link rel="stylesheet" type="text/css" href="./inclusions/style.css" title="style" />
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 
 <body>
 	<img src="inclusions/images/gnu-head.png" align="right" alt="" />
-	<h1>Using GNU's GDB Debugger</h1>
-	<h1>Table Of Contents</h1>
-	<h4>By Peter Jay Salzman</h4>
+	<header class="site-head">
+		<h1>Using GNU's GDB Debugger</h1>
+		<h2>Administrata</h2>
+		<h2>by Peter Jay Salzman</h2>
+	</header>
 	<hr>
 	<table width="100%">
 		<tr>
@@ -22,112 +24,116 @@
 	</table>
 	<hr>
 
-	<h3>Chapter 0: Administrata</h3>
-	<ol>
-		<li><a href="./00-Administrata.html#whywritethistutorial">Why Write This Tutorial?</a></li>
-		<li><a href="./00-Administrata.html#acknowledgementsanddedication">Acknowledgements And Dedication</a></li>
-		<li><a href="./00-Administrata.html#authorshipandcopyright">Authorship And Copyright</a></li>
-		<li><a href="./00-Administrata.html#aboutexercises">About Exercises</a></li>
-		<li><a href="./00-Administrata.html#thankyous">Thank Yous</a></li>
-		<li><a href="./00-Administrata.html#aplugfortheeff">A Plug For The EFF</a></li>
-		<li><a href="./00-Administrata.html#arequestforhelp">A Request For Help</a></li>
-	</ol>
 
-	<h3>Chapter 1: Introduction</h3>
-	<ol>
-		<li><a href="./01-Introduction.html#whatisadebugger">What Is A Debugger?</a></li>
-		<li><a href="./01-Introduction.html#whynotuse<tt>printf()</tt>">Why Not Use <code>printf()</code>?</a></li>
-		<li><a href="./01-Introduction.html#whatisgdb">What Is GDB?</a></li>
-		<li><a href="./01-Introduction.html#othersymbolicdebuggers">Other Symbolic Debuggers</a></li>
+	<section class="site-body">
+		<h2>Chapter 0: Administrata</h2>
 		<ol>
-			<li><a href="./01-Introduction.html#debuggers">Debuggers</a></li>
-			<li><a href="./01-Introduction.html#frontends">Front Ends</a></li>
+			<li><a href="./00-Administrata.html#whywritethistutorial">Why Write This Tutorial?</a></li>
+			<li><a href="./00-Administrata.html#acknowledgementsanddedication">Acknowledgements And Dedication</a></li>
+			<li><a href="./00-Administrata.html#authorshipandcopyright">Authorship And Copyright</a></li>
+			<li><a href="./00-Administrata.html#aboutexercises">About Exercises</a></li>
+			<li><a href="./00-Administrata.html#thankyous">Thank Yous</a></li>
+			<li><a href="./00-Administrata.html#arequestforhelp">A Plug For The EFF</a></li>
+			<li><a href="./00-Administrata.html#arequestforhelp">A Request For Help</a></li>
 		</ol>
-	</ol>
 
-	<h3>Chapter 2: Memory Layout and the Stack</h3>
-	<ol>
-		<li><a href="./02a-Memory_Layout_And_The_Stack.html#wherearewegoingtogo">Where Are We Going To Go?</a></li>
-		<li><a href="./02a-Memory_Layout_And_The_Stack.html#virtualmemory">Virtual Memory</a></li>
-		<li><a href="./02a-Memory_Layout_And_The_Stack.html#memorylayout">Memory Layout</a></li>
-		<li><a href="./02a-Memory_Layout_And_The_Stack.html#stackframesandthestack">Stack Frames And The Stack</a></li>
-		<li><a href="./02a-Memory_Layout_And_The_Stack.html#thesymboltable">The Symbol Table</a></li>
-		<li><a href="./02a-Memory_Layout_And_The_Stack.html#preparinganexecutablefordebugging">Preparing An Executable For Debugging</a></li>
-		<li><a href="./02a-Memory_Layout_And_The_Stack.html#investigatingthestackwithgdb">Investigating The Stack With GDB</a></li>
-	</ol>
+		<h2>Chapter 1: Introduction</h2>
+		<ol>
+			<li><a href="./01-Introduction.html#whatisadebugger">What Is A Debugger?</a></li>
+			<li><a href="./01-Introduction.html#whynotuse<tt>printf()</tt>">Why Not Use <code>printf()</code>?</a></li>
+			<li><a href="./01-Introduction.html#whatisgdb">What Is GDB?</a></li>
+			<li><a href="./01-Introduction.html#othersymbolicdebuggers">Other Symbolic Debuggers</a>
+				<ol>
+					<li><a href="./01-Introduction.html#debuggers">Debuggers</a></li>
+					<li><a href="./01-Introduction.html#frontends">Front Ends</a></li>
+				</ol>
+			</li>
+		</ol>
 
-	<h3>Interlude: Debugging With Your Brain</h3>
-	<ol>
-		<li><a href="./02b-Debugging_With_Your_Brain.html#pleasereadbeforecontinuing">Please Read Before Continuing</a></li>
-		<li><a href="./02b-Debugging_With_Your_Brain.html#debuggingwithyourbrain">Debugging With Your Brain</a></li>
-	</ol>
+		<h2>Chapter 2: Memory Layout and the Stack</h2>
+		<ol>
+			<li><a href="./02a-Memory_Layout_And_The_Stack.html#wherearewegoingtogo">Where Are We Going To Go?</a></li>
+			<li><a href="./02a-Memory_Layout_And_The_Stack.html#virtualmemory">Virtual Memory</a></li>
+			<li><a href="./02a-Memory_Layout_And_The_Stack.html#memorylayout">Memory Layout</a></li>
+			<li><a href="./02a-Memory_Layout_And_The_Stack.html#stackframesandthestack">Stack Frames And The Stack</a></li>
+			<li><a href="./02a-Memory_Layout_And_The_Stack.html#thesymboltable">The Symbol Table</a></li>
+			<li><a href="./02a-Memory_Layout_And_The_Stack.html#preparinganexecutablefordebugging">Preparing An Executable For Debugging</a></li>
+			<li><a href="./02a-Memory_Layout_And_The_Stack.html#investigatingthestackwithgdb">Investigating The Stack With GDB</a></li>
+		</ol>
 
-	<h3>Chapter 3: Initialization, Listing, And Running</h3>
-	<ol>
-		<li><a href="./03-Initialization,_Listing,_And_Running.html#wherearewenow">Where Are We Now?</a></li>
-		<li><a href="./03-Initialization,_Listing,_And_Running.html#wherearewegoingtogo">Where Are We Going To Go?</a></li>
-		<li><a href="./03-Initialization,_Listing,_And_Running.html#listingsourcecode">Listing Source Code</a></li>
-		<li><a href="./03-Initialization,_Listing,_And_Running.html#settingthelistsize">Setting The List Size</a></li>
-		<li><a href="./03-Initialization,_Listing,_And_Running.html#the<tt>.gdbinit</tt>file">The <code>.gdbinit</code> File</a></li>
-		<li><a href="./03-Initialization,_Listing,_And_Running.html#gdbinitonmswindows">gdbinit  on MS  Windows</a></li>
-		<li><a href="./03-Initialization,_Listing,_And_Running.html#runningaprogramingdb">Running A Program In GDB</a></li>
-		<li><a href="./03-Initialization,_Listing,_And_Running.html#restartingaprogramingdb">Restarting A Program In GDB</a></li>
-	</ol>
+		<h2>Interlude: Debugging With Your Brain</h2>
+		<ol>
+			<li><a href="./02b-Debugging_With_Your_Brain.html#pleasereadbeforecontinuing">Please Read Before Continuing</a></li>
+			<li><a href="./02b-Debugging_With_Your_Brain.html#debuggingwithyourbrain">Debugging With Your Brain</a></li>
+		</ol>
 
-	<h3>Chapter 4: Breakpoints And Watchpoints</h3>
-	<h4>This chapter is under massive reconstruction.</h4>
-	<ol>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#breaking">Breaking</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#settingbasicbreakpoints">Setting Basic Breakpoints</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#byfunctionname">By Function Name</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#bylinenumber">By Line Number</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#byfileandlinenumber">By File And Line Number</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#byaddress">By Address</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#breakpointnumbers">Breakpoint Numbers</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#removingbreakpoints">Removing Breakpoints</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#enabling,disablingandignoring">Enabling, Disabling And Ignoring</a></li>
-		<li><a href="./04-Breakpoints_And_Watchpoints.html#listingbreakpoints">Listing Breakpoints</a></li>
-	</ol>
+		<h2>Chapter 3: Initialization, Listing, And Running</h2>
+		<ol>
+			<li><a href="./03-Initialization,_Listing,_And_Running.html#wherearewenow">Where Are We Now?</a></li>
+			<li><a href="./03-Initialization,_Listing,_And_Running.html#wherearewegoingtogo">Where Are We Going To Go?</a></li>
+			<li><a href="./03-Initialization,_Listing,_And_Running.html#listingsourcecode">Listing Source Code</a></li>
+			<li><a href="./03-Initialization,_Listing,_And_Running.html#settingthelistsize">Setting The List Size</a></li>
+			<li><a href="./03-Initialization,_Listing,_And_Running.html#the<tt>.gdbinit</tt>file">The <code>.gdbinit</code> File</a></li>
+			<li><a href="./03-Initialization,_Listing,_And_Running.html#gdbinitonmswindows">gdbinit  on MS  Windows</a></li>
+			<li><a href="./03-Initialization,_Listing,_And_Running.html#runningaprogramingdb">Running A Program In GDB</a></li>
+			<li><a href="./03-Initialization,_Listing,_And_Running.html#restartingaprogramingdb">Restarting A Program In GDB</a></li>
+		</ol>
 
-	<h3>Chapter 5: Stepping and Resuming</h3>
-	<h4>This chapter is under massive reconstruction.</h4>
-	<ol>
-		<li><a href="./05-Stepping_And_Resuming.html#breakpointsandwatchpoints">Breakpoints And Watchpoints</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#settingbreakpointsinsinglefileprograms">Setting Breakpoints In Single File Programs</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#settingbreakpointsinmultiplefileprograms">Setting Breakpoints In Multiple File Programs</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#advancedbreaking">Advanced Breaking</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#summaryofbreakpoints">Summary Of Breakpoints</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#deletingbreakpoints">Deleting Breakpoints</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#inspectingvariables">Inspecting Variables</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#inspectingarraysandstructures">Inspecting Arrays And Structures</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#advancedinspection">Advanced Inspection</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#changingvariables">Changing Variables</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#steppingthroughyourprogram">Stepping Through Your Program</a></li>
-		<li><a href="./05-Stepping_And_Resuming.html#findingoutwhereyouareandlistingsourcecode">Finding Out Where You Are And Listing Source Code</a></li>
-	</ol>
+		<h2>Chapter 4: Breakpoints And Watchpoints</h2>
+		<p></strong>This chapter is under massive reconstruction.</strong><p>
+		<ol>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#breaking">Breaking</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#settingbasicbreakpoints">Setting Basic Breakpoints</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#byfunctionname">By Function Name</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#bylinenumber">By Line Number</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#byfileandlinenumber">By File And Line Number</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#byaddress">By Address</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#breakpointnumbers">Breakpoint Numbers</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#removingbreakpoints">Removing Breakpoints</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#enabling,disablingandignoring">Enabling, Disabling And Ignoring</a></li>
+			<li><a href="./04-Breakpoints_And_Watchpoints.html#listingbreakpoints">Listing Breakpoints</a></li>
+		</ol>
 
-	<h3>Chapter 6: Debugging A Running Process</h3>
-	<ol>
-		<li><a href="./06-Debugging_A_Running_Process.html#debuggingarunningprocess">Debugging A Running Process</a></li>
-		<li><a href="./06-Debugging_A_Running_Process.html#withcommandlinearguments">With Command Line Arguments</a></li>
-		<li><a href="./06-Debugging_A_Running_Process.html#withtheattachcommand">With The Attach Command</a></li>
-		<li><a href="./06-Debugging_A_Running_Process.html#processeswithoutdebuggingsymbols">Processes Without Debugging Symbols</a></li>
-	</ol>
+		<h2>Chapter 5: Stepping and Resuming</h2>
+		<p></strong>This chapter is under massive reconstruction.</strong><p>
+		<ol>
+			<li><a href="./05-Stepping_And_Resuming.html#breakpointsandwatchpoints">Breakpoints And Watchpoints</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#settingbreakpointsinsinglefileprograms">Setting Breakpoints In Single File Programs</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#settingbreakpointsinmultiplefileprograms">Setting Breakpoints In Multiple File Programs</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#advancedbreaking">Advanced Breaking</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#summaryofbreakpoints">Summary Of Breakpoints</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#deletingbreakpoints">Deleting Breakpoints</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#inspectingvariables">Inspecting Variables</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#inspectingarraysandstructures">Inspecting Arrays And Structures</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#advancedinspection">Advanced Inspection</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#changingvariables">Changing Variables</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#steppingthroughyourprogram">Stepping Through Your Program</a></li>
+			<li><a href="./05-Stepping_And_Resuming.html#findingoutwhereyouareandlistingsourcecode">Finding Out Where You Are And Listing Source Code</a></li>
+		</ol>
 
-	<h3>Chapter 7: Debugging Ncurses Programs</h3>
-	<ol>
-		<li><a href="./07-Debugging_Ncurses_Programs.html#ncurses">Ncurses</a></li>
-		<li><a href="./07-Debugging_Ncurses_Programs.html#gettingstarted">Getting Started</a></li>
-		<li><a href="./07-Debugging_Ncurses_Programs.html#separatinginput/output">Separating Input/Output</a></li>
-	</ol>
+		<h2>Chapter 6: Debugging A Running Process</h2>
+		<ol>
+			<li><a href="./06-Debugging_A_Running_Process.html#debuggingarunningprocess">Debugging A Running Process</a></li>
+			<li><a href="./06-Debugging_A_Running_Process.html#withcommandlinearguments">With Command Line Arguments</a></li>
+			<li><a href="./06-Debugging_A_Running_Process.html#withtheattachcommand">With The Attach Command</a></li>
+			<li><a href="./06-Debugging_A_Running_Process.html#processeswithoutdebuggingsymbols">Processes Without Debugging Symbols</a></li>
+		</ol>
 
-	<h3>Chapter 8: Other Stuff</h3>
-	<ol>
-		<li><a href="./08-Other_Stuff.html#officialsources">Official Sources</a></li>
-		<li><a href="./08-Other_Stuff.html#othertutorials">Other Tutorials</a></li>
-		<li><a href="./08-Other_Stuff.html#kudos">Kudos</a></li>
-		<li><a href="./08-Other_Stuff.html#google">Google</a></li>
-	</ol>
+		<h2>Chapter 7: Debugging Ncurses Programs</h2>
+		<ol>
+			<li><a href="./07-Debugging_Ncurses_Programs.html#ncurses">Ncurses</a></li>
+			<li><a href="./07-Debugging_Ncurses_Programs.html#gettingstarted">Getting Started</a></li>
+			<li><a href="./07-Debugging_Ncurses_Programs.html#separatinginput/output">Separating Input/Output</a></li>
+		</ol>
+
+		<h2>Chapter 8: Other Stuff</h2>
+		<ol>
+			<li><a href="./08-Other_Stuff.html#officialsources">Official Sources</a></li>
+			<li><a href="./08-Other_Stuff.html#othertutorials">Other Tutorials</a></li>
+			<li><a href="./08-Other_Stuff.html#kudos">Kudos</a></li>
+			<li><a href="./08-Other_Stuff.html#google">Google</a></li>
+		</ol>
+	</section>
 
 	<p>&nbsp;</p>
 	<hr>
