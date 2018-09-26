@@ -95,6 +95,13 @@ table {
     margin-left: 18px;
 }
 
+.site-body h4 {
+    color: #870000;
+    font-size: 1.1em;
+    margin-bottom: .5em;
+    margin-left: 18px;
+}
+
 p {
 	font-family: 'Roboto', sans-serif;
 	font-size: 1.1em;
@@ -122,9 +129,27 @@ blockquote, q {
 	width: 50%;
 }
 
+pre,
 code {
 	background: #e0e0e0;
 	color: black;
+}
+
+/*
+  ========================================
+  Table of Contents
+  ========================================
+*/
+
+.table-of-contents ol {
+    background: #eee;
+    font-size: .8em;
+    list-style-type: lower-roman;
+    margin-right: 75%;
+}
+
+.table-of-contents ol > li {
+    list-style-type: decimal;
 }
 
 

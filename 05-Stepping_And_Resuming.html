@@ -1,727 +1,791 @@
-<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-	<html lang="en">
-	<head>
-	<title>Peter's gdb Tutorial: Stepping And Resuming </title>
-	<link rel=STYLESHEET type="text/css" href="./inclusions/style.css" title="Style" />
-	</head>
-	<body>
-
-	<img src="inclusions/images/gnu-head.png" align="right" alt="" /><h1>Using GNU's GDB Debugger</h1><h1>Stepping And Resuming</h1><h4>By Peter Jay Salzman</h4><hr /><table width="100%"><tr><td align="left">Previous: <a href="04-Breakpoints_And_Watchpoints.php">Breakpoints And Watchpoints</a></td><td align="right">Next: <a href="06-Debugging_A_Running_Process.php">Debugging A Running Process</a></td></tr></table><hr />
-
-
-<br /><br /><a name="settingbreakpointsinsinglefileprograms"><h2>Setting Breakpoints In Single File Programs</h2></a>
-
-<p>There are many ways to set breakpoints.  We'll go over each in turn.  If you feel up to it, download <a href="./code/05/try5/try5.c">try5.c</a> and follow my example.  Otherwise, you can simply follow the text (I list try5.c in the previous
-section).  It's better if you do this alongside the tutorial, but since I'm showing gdb's output, it's not necessary.
-First, compile try5.c for debugging.</p>
-
-<pre class="demo">
-   $ gcc -Wall -W -g -o try5 try5.c
-</pre>
-
-<p>The first (and easiest) way you can set a breakpoint is by specifying a linenumber.  To break at line 6, simply type
-<tt>break 6</tt>.  From now on, I'm not going to show the copyright when you first run gdb.</p>
-
-<pre class="demo">
-	$ gdb try5
-	(gdb) break 6
-	Breakpoint 1 at 0x80483f6: file try5.c, line 6.
-</pre>
-
-<p>Wasn't that easy?   You can also set breakpoints with a function name:</p>
-
-	(gdb) break display
-<pre class="demo">
-	Breakpoint 2 at 0x804841a: file try5.c, line 15.
-</pre>
-
-<p>Disable the 1st breakpoint, and then look at what you've done:</p>
-
-<pre class="demo">
-	(gdb) disable 1
-	(gdb) info breakpoints 
-	Num Type           Disp Enb Address    What
-	1   breakpoint     keep n   0x080483f6 in main at try5.c:6
-	2   breakpoint     keep y   0x0804841a in display at try5.c:15
-</pre>
-
-<p>Now run the program.  Remember, breakpoint 1 is disabled, so it'll stop at line 15.</p>
-
-<pre class="demo">
-   (gdb) run
-   Starting program: /www/p/linux/gdb/try5 
-   
-   Breakpoint 2, display (x=3) at try5.c:15
-   15              for (i=0; i&lt;x; ++i) {
-   (gdb)
-</pre>
-
-<p>We've seen 2 ways to set a breakpoint.  Now here's a third.  To set a breakpoint 2 lines down from the current line, use
-<tt>break +2</tt>.  Similarly, you can set a breakpoint 3 lines <i>up</i> from the current line by <tt>break -3</tt>.  Let's set
-a breakpoint at line 18 and continue the execution.</p>
-
-<pre class="demo">
-	(gdb) break +3
-	Breakpoint 3 at 0x8048450: file try5.c, line 18.
-	(gdb) continue
-	Continuing.
-	i is 0.
-	i is 1.
-	i is 2.
-
-	Breakpoint 3, display (x=5) at try5.c:18
-	18      }
-	(gdb) 
-</pre>
-
-<p>Go ahead and quit gdb to prepare for the next section.</p>
-
-
-
-
-
-
-<br /><br /><a name="settingbreakpointsinmultiplefileprograms"><h2>Setting Breakpoints In Multiple File Programs</h2></a>
-
-<p>How do we set breakpoints when a program spans multiple files?</p>
-
-<p>For the form <tt>break linenumber</tt>, there is an ambiguity when you have a multiple file program.  The line number of
-which file?  The answer is that by default, the line number is taken as a line number in whatever file holds <tt>main()</tt>.
-That is certainly a reasonable default!  But what if we wanted to break on line 5 of a different file?  This gives a 4th form
-for the break command:</p>
-
-<pre class="demo">
-	break <i>filename:linenumber</i>
-</pre>
-
-<p>This command will break on line <i>linenumber</i> of the source code file named <i>filename</i>.  For example, <tt>break
-MyFuncs.c:102</tt> will break on line 102 of the source code file MyFuncs.c.  There's a 5th form:</p>
-
-<pre class="demo">
-	break <i>filename:function</i>
-</pre>
-
-<p>For example, <tt>break MyFuncs.c:MyPrintFunction</tt>.  But unless you're using overloaded function names (you've defined a
-function multiple times), this is superfluous since you're not allowed (in C) to have 2 definitions belonging to the same
-function name.</p>
-
-
-
-
-
-
-<br /><br /><a name="advancedbreaking"><h2>Advanced Breaking</h2></a>
-
-<p>If you're trying to debug a program that doesn't have debugging info compiled into the executable, you can't set breakpoints
-by line number or function name.  Instead you have to specify where to break by giving a memory address.  This gives us a 6th
-form:</p>
-
-<pre class="demo">
-	break *<i>address</i>
-</pre>
-
-<p>Since I know next to nothing about this, I'll move right along...</p>
-
-<p>The <tt>break</tt> command without any argument gives a 7th form (only one more to go).  It sets a break point at the very
-next instruction.  Look at try5 again (having one eye on the source code will help here).</p>
-
-<pre class="demo">
-	1    $ gdb try5
-	2    (gdb) break display
-	3    Breakpoint 1 at 0x804841a: file try5.c, line 15.
-	4    (gdb) run
-	5    Starting program: /www/p/linux/gdb/try5 
-	6
-	7    Breakpoint 1, display (x=5) at try5.c:15
-	8    15              for (i=0; i&lt;x; ++i) {
-	9    (gdb) next
-	10   16                 printf("i is %d.\n", i);
-	11   (gdb) print i
-	12   $1 = 0
-	13   (gdb) break
-	14   Breakpoint 2 at 0x8048430: file try5.c, line 16.
-	15   (gdb) continue
-	16   Continuing.
-	17   i is 0.
-	18
-	19   Breakpoint 2, display (x=5) at try5.c:16
-	20   16                 printf("i is %d.\n", i);
-	21   (gdb) print i
-	22   $2 = 1
-</pre>
-
-<p>The astute reader will wonder why, on line 22, <tt>i</tt> has the value of 1 and not 0.  We set the breakpoint on line
-13 when <tt>i</tt> had the value of 0.  But the very next instruction (which is where we set the breakpoint) was just a
-<tt>printf</tt> statement (source code line 16).  How in blazes did the <tt>printf</tt> increment the value of <tt>i</tt>? 
-<p>Here's the answer.  Once gdb stops at a breakpoint, it will ignore all other breakpoints until one line of instruction
-has executed.  Why does it do this?  If this weren't the case, everytime you stopped at a breakpoint, you'd have to
-disable that breakpoint to resume execution--you wouldn't be able to get past that breakpoint!  If this doesn't make
-sense to you, think about it for awhile.  If you still can't get it, don't worry.  It's a minor point.</p>
-
-<p>There's one more use for breakpoint form 7, the <tt>break</tt> command with no arguments.  If you change to a higher
-frame, use <tt>break</tt> and then continue, the b</p>
-
-
-<pre class="demo">
-	$ gdb try5
-	(gdb) break display
-	Breakpoint 1 at 0x804841a: file try5.c, line 15.
-	15              for (i=0; i&lt;x; ++i) {
-	(gdb) backtrace
-	#0  display (x=3) at try5.c:15
-	#1  0x8048409 in main () at try5.c:8
-	#2  0x4003e46b in __libc_start_main () from /lib/libc.so.6
-	(gdb) frame 1
-	#1  0x8048409 in main () at try5.c:8
-	8          display(x);
-	(gdb) break
-	Breakpoint 2 at 0x8048409: file try5.c, line 8.
-	(gdb) continue
-	Continuing.
-	i is 0.
-	i is 1.
-	i is 2.
-
-	Breakpoint 2, 0x8048409 in main () at try5.c:8
-	8          display(x);
-	(gdb) 
-</pre>
-
-<p>Can you see what happened here?  We stopped at the top of <tt>display()</tt>, frame 0.  We then switched to the frame 1
-(<tt>main()</tt>) and issued the <tt>break</tt> command.  This set a breakpoint at the very next instruction <i>after</i> the
-call to <tt>display()</tt>.  We then continued execution, and the program ran until it hit the very next instruction after
-<tt>display()</tt>.  In essence, we set the breakpoint so that execution would halt after <tt>display()</tt> returned.   Make
-sense?</p>
-
-<p>To reiterate, the 7th form of breakpoint is used for loops when you're in the top most frame and returns from functions
-when you're not in the top most frame.  Frankly, I don't find this terribly useful.  When in a loop, I think the
-<tt>break <i>+offset</i></tt> or <tt>break <i>linenumber</i></tt> is more convenient.  For returning from functions, I
-find the <tt>finish</tt> command more useful (which you'll learn about shortly).</p>
-
-<p>The 8th and last form of break command is the conditional breakpoint.  They are quite useful but little understood.
-Perhaps part of the reason is that the gdb User Manual does a really poor job explaining them.  Here is the form:</p>
-
-<pre class="demo">
-	break ... if <i>cond</i>
-</pre>
-
-<p>where <tt>...</tt> represents any one of the previous 7 forms of breakpoints we've learned about already and <i>cond</i> is
-any conditional in the language you're using.  Here is an example:</p>
-
-
-<pre class="demo">
-	$ gdb try5
-	(gdb) break 16 if i==2
-	Breakpoint 1 at 0x8048430: file try5.c, line 16.
-	(gdb) r
-	Starting program: /www/p/linux/gdb/try5 
-	i is 0.
-	i is 1.
-
-	Breakpoint 1, display (x=3) at try5.c:16
-	16                 printf("i is %d.\n", i);
-</pre>
-
-<p>We used the 1st form of break with the conditional <i>i==2</i>.  We could've also used a test for inequality, like
-<i>i!=2</i> or <i>i&gt;2</i>.  This is mega useful when you're inside of a loop that's going to repeat a million times.  The 8th
-form of break is your friend!</p>
-
-
-
-
-
-
-<br /><br /><a name="summaryofbreakpoints"><h2>Summary Of Breakpoints</h2></a>
-
-<table>
-<tr><td>Form 1:</td><td>break <i>linenumber</i></td><td>Set a breakpoint at line number <i>linenumber</i></td></tr>
-<tr><td>Form 2:</td><td>break <i>function</i></td><td>Set a breakpoint at function <i>function</i>.</td></tr>
-<tr><td>Form 3:</td><td>break <i>filename</i>:<i>linenumber</i></td><td>Set a breakpoint at line <i>linenum</i> in source file <i>filename</i>.</td></tr>
-<tr><td>Form 4:</td><td>break <i>*address</i></td><td>Set a breakpoint at address &lt;<i>address</i>&gt;.  Use this to
-set breakpoints in parts of a program that doesn't have debugging information or source files.</td></tr>
-</table>
-
-
-
-
-
-
-<br /><br /><a name="deletingbreakpoints"><h2>Deleting Breakpoints</h2></a>
-
-<p>Here are the commands used to delete breakpoints you've set when they've outlived their usefulness.</p>
-
-<table>
-<tr><td>clear &lt;<i>function</i>&gt;</td>
-	<td>Clear any breakpoints set at the entry to the function &lt;<i>function</i>&gt;.</td></tr>
-<tr><td>clear &lt;<i>filename</i>&gt;&lt;<i>function</i>&gt;</td>
-	<td>Clear any breakpoints set at the entry to the function &lt;<i>function</i>&gt; defined in the source code file
-	&lt;<i>filename</i>&gt;.</td></tr>
-<tr><td>clear &lt;<i>linenum</i>&gt;</td>
-	<td>Clear any breakpoints set at line &lt;<i>linenum</i>&gt; of the current source file.  The current source file is
-	the last file whose text was printed. </td></tr>
-<tr><td>clear &lt;<i>filename:linenum</i>&gt;</td>
-	<td>Clear any breakpoints at line &lt;<i>linenum</i>&gt; in file &lt;<i>filename</i>&gt;.</td></tr>
-<tr><td>delete</td>
-	<td>Clear all breakpoints.</td></tr>
-<tr><td>delete <i>n</i></td>
-	<td>Each breakpoint is assigned a number starting with 1.  This clears breakpoint <i>n</i>.</td></tr>
-</table>
-<hr><p><br /><p>
-
-
-
-
-
-
-<br /><br /><a name="inspectingvariables"><h2>Inspecting Variables</h2></a>
-
-<p>Note to Fortran users: All Fortran variables must be in lowercase, regardless of how they were capitalized in your source
-code.  This is because the Fortran standard specifies case independence when it comes to variables.  Yes, variable <tt>C</tt> is
-variable <tt>c</tt> in the Fortran standard.  There are compilers out there that allow you to use case dependent variables, but
-this is non-standard, and gcc mandates all lowercase variables.  This was done to support legacy code.  Sigh.</p>
-
-<p>The whole purpose of setting a breakpoint or watchpoint is to see what's going on with your variables, so let's take a look
-at inspecting your variables.  You can print the data type of a variable using the <tt>ptype</tt> command.  Here are some
-examples:</p>
-
-<pre class="demo">
-   (gdb) ptype argc
-   type = int
-   (gdb) ptype myfloat
-   type = float
-   (gdb) ptype argv 
-   type = char **
-   (gdb) ptype mystring
-   type = unsigned char *
-   (gdb) pt myIntArray
-   type = int [10]
-</pre>
-
-<p>You can even use ptype to look at structures.  Take, for example, the fstat structure defined in sys/stat.h.</p>
-
-<pre class="demo">
-   (gdb) ptype fstat
-   type = struct stat {
-       __dev_t st_dev;
-       short unsigned int __pad1;
-       __ino_t st_ino;
-       __mode_t st_mode;
-       __nlink_t st_nlink;
-       __uid_t st_uid;
-       __gid_t st_gid;
-       __dev_t st_rdev;
-       short unsigned int __pad2;
-       __off_t st_size;
-       long unsigned int st_blksize;
-       __blkcnt_t st_blocks;
-       __time_t st_atime;
-       long unsigned int __unused1;
-       __time_t st_mtime;
-       long unsigned int __unused2;
-       __time_t st_ctime;
-       long unsigned int __unused3;
-       long unsigned int __unused4;
-       long unsigned int __unused5;
-   }
-</pre>
-
-<p>That's quite a structure!  You can abbreviate <tt>ptype</tt> by <tt>pt</tt>.</p>
-
-<pre class="demo">
-	(gdb) pt mydouble<br>
-	type = double<br>
-</pre>
-
-<p>Remember, you can only print the data type of a variable which is defined in the currently selected frame.</p>
-
-<p>Now that you know how to print the data type of your variables, you may want to print their values.  Consider the
-following program (which will be compiled via <tt>gcc -g filename</tt>):</p>
-
-<pre class="code">1   #include&lt;stdio.h&gt;
-2   #include&lt;string.h&gt;
-3   
-4   int main( int argc, char *argv[] )
-5   {
-6        double mydouble = 3.14 / 3;
-7        float  myfloat  = 3.3;
-8        char   mychar   = 'A';
-9        int    myIntArray[10];
-10       int    MyNegativeInt = -1;
-11       char   myString[20];
-12  
-13       struct foo {
-14            char *name;
-15            int  EyeColour;
-16       } myStruct;
-17  
-18       strncpy(myString, "hello", 19);
-19  
-20       for ( int i = 0; i &lt; 10; i++ )
-21            myIntArray[i] = i;
-22  
-23       return 0;
-24  }
-</pre>
-<p>You can view the value of a variable using the <tt>print</tt> command.</p>
-
-<pre class="demo">
-   (gdb) print i
-   $4 = -1073744780
-</pre>
-
-<p>I stopped the program right before the for loop, so this is what variable <tt>i</tt> is before it gets initialized.  gdb
-prints the value of the variable which is most `comfortable' (to borrow fortran 99 lingo) with the datatype.  In other words,
-floats get printed as floats:</p>
-
-<pre class="demo">
-	(gdb) print myfloat
-	$1 = 3.29999995
-</pre>
-
-<p>and doubles get printed as doubles:</p>
-
-<pre class="demo">
-	(gdb) print mydouble
-	$1 = 1.0466666666666666
-</pre>
-
-<p>and chars get printed as chars:</p>
-
-<pre class="demo">
-	(gdb) print mychar
-	$1 = 65 'A'
-</pre>
-
-<p>By the way, you can use the abbreviation <tt>p</tt> for <tt>print</tt>:</p>
-
-<pre class="demo">
-	(gdb) p argc
-	$1 = 1
-</pre>
-
-<p>You may be wondering what the numbers preceeded by $ (like $1 or $3) mean.   They're kind of like a variable history.
-Everytime you print any variable, the <tt>$n</tt> gets incremented by 1.   $ by itself refers to the last variable you printed
-and $n refers to the n'th variable you printed.  Look at the following example to see this:</p>
-
-<pre class="demo">
-	(gdb) p mychar
-	$26 = 65 'A'
-	(gdb) p mydouble
-	$27 = 1.0466666666666666
-	(gdb) p $
-	$28 = 1.0466666666666666
-	(gdb) p $27
-	$29 = 1.0466666666666666
-	(gdb) p $26
-	$30 = 65 'A'
-</pre>
-
-<p>You can even typecast a variable when you print it!  Here's <tt>MyNegativeInt</tt> as an int, char and double
-respectively:</p>
-
-<pre class="demo">
-	(gdb) p MyNegativeInt
-	$41 = -1
-	(gdb) p (char) MyNegativeInt
-	$42 = -1 'ÿ'
-	(gdb) p (double) MyNegativeInt
-	$43 = -1
-</pre>
-
-<p>The possibilities are endless.  But wait, there's more!</p>
-
-
-
-
-
-<br /><br /><a name="inspectingarraysandstructures"><h2>Inspecting Arrays And Structures</h2></a>
-
-<p>Printing array values is much the same as printing other variables.  gdb still uses the concept of being `comfortable'.  In
-other words, when you print an array, that's exactly what you get!  From the code snippet of the previous section:</p>
-
-<pre class="demo">
-   (gdb) p myIntArray
-   $46 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-</pre>
-
-<p>Of course, gdb knows how to access elements of an array:</p>
-
-<pre class="demo">
-	(gdb) pt myIntArray
-	type = int [10]
-	(gdb) pt myIntArray[3]
-	type = int
-	(gdb) p myIntArray[3]
-	$48 = 3
-</pre>
-
-<p>You can do kind of advanced stuff too -- things that you'd expect from only Perl :-).   Here's how you print 5 elements of
-myIntArray, starting at element 3:</p>
-
-<pre class="demo">
-	(gdb) p myIntArray[3]@5
-	$49 = {3, 4, 5, 6, 7}
-</pre>
-
-<p>GDB will not, however, check bounds of the array.  Previously we defined <tt>myIntArray</tt> as an array of 10 ints.  Let's
-see what happens when we try printing 4 ints past the end of the array:</p>
-
-<pre class="demo">
-	(gdb) p myIntArray[3]@11
-	$54 = {3, 4, 5, 6, 7, 8, 9, 10, 1107293224, 1079194419, -1947051841}
-</pre>
-
-<p>Doh!  Hopefully, that's not someone's password.  :-).    You can also print structures:</p>
-
-<pre class="demo">
-	(gdb) p myStruct
-	$2 = {name = 0x40014978 "Miles Davis", EyeColour = 1}
-</pre>
-
-<p>However, this might get out of hand for very large structs.  You can set pretty printing of structures by <tt>set print
-pretty</tt>:</p>
-
-<pre class="demo">
-	(gdb) set print pretty
-	(gdb) p myStruct
-	$4 = {
-	  name = 0x40014978 "Miles Davis", 
-	  EyeColour = 1
-	}
-	(gdb) 
-</pre>
-
-<p>or, if you only want one of the elements of the structure, you can print it in the way that would seem obvious:</p>
-
-<pre class="demo">
-	(gdb) print myStruct.name
-	$6 = 0x40014978 "Miles Davis"
-</pre>
-
-<p>this works too, but why is a mystery to me:</p>
-
-<pre class="demo">
-	(gdb) print myStruct-&gt;name 
-	$15 = 0x40014978 "Miles Davis"
-</pre>
-
-
-
-
-
-<br /><br /><a name="advancedinspection"><h2>Advanced Inspection</h2></a>
-
-<p>You can print things using a format specifier:</p>
-
-<pre class="demo">
-	print /FMT variable
-</pre>
-
-<p>Where FMT is:</p>
-
-<center><table cellpadding=3>
-<tr><td>o</td><td>octal           </td><td> </td><td>x</td><td>hex  </td><td></td><td>d</td><td>decimal</td><td></td>
-    <td>u</td><td>unsigned decimal</td><tr>
-<tr><td>t</td><td>binary</td><td></td><td>f</td><td>float</td><td></td><td>a</td><td>address</td><td></td>
-    <td>c</td><td>char </td></tr>
-</table></center>
-
-<p>Here's some examples of printing some of our variables using a format specifier:</p>
-
-<pre class="demo">
-	(gdb) p mychar
-	$33 = 65 'A'
-	(gdb) p /o mychar
-	$34 = 0101
-	(gdb) p /x mychar 
-	$35 = 0x41
-	(gdb) p /d mychar 
-	$36 = 65
-	(gdb) p /u mychar 
-	$37 = 65
-	(gdb) p /t mychar 
-	$38 = 1000001
-	(gdb) p /f mychar 
-	$39 = 65
-	(gdb) p /a mychar 
-	$40 = 0x41
-</pre>
-
-<p>By the way, memory addresses in gdb are printed in hex by default.  Therefore, <tt>p /a mychar</tt> prints mychar interpreted
-as an address, the hexidecimal representation of 65.  This is very different from the address of mychar!</p>
-
-<p>Speaking of the address of mychar, one would expect that since C loves pointers, gdb would love pointers too.  And in fact,
-it does!  Printing the address of mychar is obvious to C programmers (sorry, Fortran users!):</p>
-
-<pre class="demo">
-	(gdb) p &amp;mychar
-	$42 = 0xbffff41b "A33S@¿Xò\213%¿ð?Hôÿ¿\023â\003@\001"
-</pre>
-
-<p>gdb even knows about the dereference operator.  How's this for being perverse?</p>
-
-<pre class="demo">
-	(gdb) p *(&amp;mychar)
-	$43 = 65 'A'
-</pre>
-
-<p>This is the perfect vehicle for teaching students what a pointer is.  We're dereferencing the address of mychar.  Of course,
-there's more to this than just coolness (although it's worth it for the coolness factor alone!).  I was writing a curses program
-once and it kept segfaulting on me whenever I tried drawing to a WINDOW object.  By looking at the address of a WINDOW that I
-was passing to a function, I determined that I was passing a WINDOW by value, drawing to a local copy of the WINDOW and
-returning.  Of course, the local copy of the WINDOW wasn't anything initialized by curses so drawing to it was causing a
-segmentation violation.  Looking at the code, it was highly non-obvious what was was going on; it looked just swell!  It wasn't
-until I compared the address of the passed WINDOW with the address of the received WINDOW that I discovered the big oops!</p>
-
-<p>Furthermore, who here is guilty of buffer overruns?  Be truthful!  It's very easy to fall into the `off by one' error when
-you initialize, write to or read from a C array.  How many times have you used strcpy when you should've used strncpy?  These
-errors are insidious because they usually don't crash the program, but manifest themselves in wierd behavior in certain rare
-cases that are hard to track down.  Looking at the addresses of what's going on is a sure fire way of finding out the details of
-what's going on.</p>
-
-
-
-
-
-<br /><br /><a name="changingvariables"><h2>Changing Variables</h2></a>
-
-<p>There are two ways you can change the value of a variable in gdb.  Let's change the value of <tt>double myvariable</tt> to
-10.0.  Firstly, you can use the <tt>set</tt> command:</p>
-
-<pre class="demo">
-	set myvariable = 10.0
-</pre>
-
-<p>which is the `quiet' way.  gdb will simply set <tt>myvariable</tt> to 10 without printing anything.  Then there's the `noisy'
-way using the print command:</p>
-
-<pre class="demo">
-	print myvariable = 10.0
-</pre>
-
-<p>which will set <tt>myvariable</tt> to 10.0 and then print this new value to the screen.  The <tt>print</tt> command ends up
-being less keystrokes because you can use the abbreviation <tt>p</tt> for <tt>print</tt>.</p>
-
-<p>Remember, you can only change the value of a variable which is defined within the current context.  Make sure the variable
-you want to change is defined in the currently selected frame.  If it's not, you need to set the frame before you can change the
-variable.</p>
-
-
-
-
-<br /><br /><a name="steppingthroughyourprogram"><h2>Stepping through your program</h2></a>
-
-<p>One thing that is good to know is the exact sequence of execution of your program, especially through loops and conditional
-branches. If the program is not too large, you can follow it easily by executing one line at a time.</p>
-
-<p>There are two commands used to step through your program:</p>
-
-<dl>
-<dt><b>step</b>:
-<dd>Execute a single line in the program.  If the current statement calls a function, the function is single stepped.
-<dt><b>next</b>:
-<dd>Execute a single line in the program but treat function calls as a single line.  This command is used to skip over function calls.
-</dl>
-
-<p>Since C statements like <tt>printf()</tt> and <tt>scanf()</tt> are functions themselves, if you <i>step</i> through all your
-program (as opposed to <i>next</i>, you'll find yourself stepping through glibc, the standard C library (which is probably
-<i>not</i> what you want!).  Good debugging makes use of <tt>next</tt> mostly.  If you really want to step through a function
-call, it's best to set a breakpoint there and then you can use <tt>next</tt> from inside the function.</p>
-
-<p>To execute the next statement, type:</p>
-
-<pre class="demo">
-	step
-</pre>
-
-<p>Each time you type a <i>step</i> command, gdb will then list the line that it is about to execute, with the line number on
-the left, so you can see what's about to happen before it happens.</p>
-
-
-
-
-
-
-
-
-
-<br /><br /><a name="findingoutwhereyouareandlistingsourcecode"><h2>Finding out where you are and listing source code</h2></a>
-
-<p>To find out where you are at any time, type the command:</p>
-
-<pre class="demo">
-	where
-</pre>
-
-<p>This will show you the current line number.  For example, a line like this:</p>
-
-<pre class="demo">
-	#0  foo () at foo.f:12
-</pre>
-
-<p>shows that the execution of our program is currently at a location that corresponds to line 12 in the Fortran
-source file, foo.f.</p>
-
-<p>You can display a few lines of your source program around the current location by using the command:</p>
-
-
-<pre class="demo">
-	list
-</pre>
-
-<p>This will list 10 lines of source roughly centred on your current line number.  If you haven't started to debug yet, it will
-list the first 10 lines of source code.  If you type list again, it'll print the next 10 lines of source code.  You can also
-type:</p>
-
-<pre class="demo">
-	list 25
-</pre>
-
-<p>and this will list 10 lines of source code centred on line 25.  Typing list again will list the next 10 lines of source code.
-You can also specify a range of lines to be listed. For example, to list lines 10 through 24 in the current program, you'd
-type:</p>
-
-<pre class="demo">
-	list 10,24
-</pre>
-
-<p>If there is a function in your program named <tt>endpoints()</tt>, you can list 10 lines centred on the start of
-<tt>endpoints()</tt> by:</p>
-
-<pre class="demo">
-	list endpoints
-</pre>
-
-<p>If you're listing lines and decide you want to see the 10 lines previous to the 10 lines you just displayed:</p>
-
-<pre class="demo">
-	list -
-</pre>
-
-<p>Suppose you set a breakpoint:</p>
-
-<pre class="demo">
-	break 55
-</pre>
-
-<p>and gdb responds with:</p>
-
-<pre class="demo">
-	Breakpoint 1 at 0x8048540: file program3.c, line 55.
-</pre>
-
-<p>You can list the lines centred around that address by specifying the asterisk (for address).  It will list the 10 lines
-centred around the source code line containing that address.</p>
-
-<pre class="demo">
-	list *0x8048540
-</pre>
-
-
-
-<p>&nbsp;</p><br /><hr /><table width="100%"><tr><td width="33%" align="left"><img src="http://www.dirac.org/linux/gdb/inclusions/icons/prev.png" alt="back"/> &nbsp; Back: <a href="04-Breakpoints_And_Watchpoints.php">Breakpoints And Watchpoints</a></td><td align="left"><img src="http://www.dirac.org/linux/gdb/inclusions/icons/up.png" alt="up" />   &nbsp;<a href="http://www.dirac.org/linux/gdb">Up</a> to the TOC</td><td align="right">Next: <a href="06-Debugging_A_Running_Process.php">Debugging A Running Process</a> &nbsp; <img src="http://www.dirac.org/linux/gdb/inclusions/icons/next.png" alt="next" /></td></tr><tr><td></td><td align="left"><img src="http://www.dirac.org/linux/gdb/inclusions/icons/email.png" alt="email" /> &nbsp;<a href="mailto:p@dirac.org">Email</a> comments and corrections<br /></td></tr><tr><td></td><td align="left"><img src="http://www.dirac.org/linux/gdb/inclusions/icons/printable.png" alt="printable" /> &nbsp;<a href="05-Stepping_And_Resuming.php?printable=yes">Printable</a> version</td><td></td></tr></table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width-device-width, initial-scale=1, shrink-to-fit=no">
+   <title>Peter's gdb Tutorial: Stepping and Resuming</title>
+   <link rel="stylesheet" type="text/css" href="./inclusions/style.css" title="style" />
+   <link href="hcodeps://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+
+<body>
+   <img src="inclusions/images/gnu-head.png" align="right" alt="" />
+   <header class="site-head">
+      <h1>Using GNU's GDB Debugger</h1>
+      <h2>Stepping and Resuming</h2>
+      <h3>by Peter Jay Salzman</h3>
+   </header>
+   <hr>
+   <table class="top-nav" width="100%">
+      <tr>
+         <td align="left">Previous: <a href="04-Breakpoints_And_Watchpoints.html">Breakpoints and Watchpoints</a></td>
+         <td align="right">Next: <a href="06-Debugging_A_Running_Process.html">Debugging a Running Process</a></td>
+      </tr>
+   </table>
+   <hr>
+
+<section class="site-body">
+
+    <a name="settingbreakpointsinsinglefileprograms"><h2>Setting Breakpoints In Single File Programs</h2></a>
+
+    <p>
+        There are many ways to set breakpoints.  We'll go over each in turn.  If you feel up to it, download <a href="./code/05/try5/try5.c">try5.c</a> and follow my example.  Otherwise, you can simply follow the text (I list try5.c in the previous section).  It's better if you do this alongside the tutorial, but since I'm showing gdb's output, it's not necessary. First, compile try5.c for debugging.
+    </p>
+
+    <code class="demo">$ gcc -Wall -W -g -o try5 try5.c</code>
+
+    <p>
+        The first (and easiest) way you can set a breakpoint is by specifying a linenumber.  To break at line 6, simply type
+        <code>break 6</code>.  From now on, I'm not going to show the copyright when you first run gdb.
+    </p>
+
+    <pre class="demo">
+    <code>
+    	$ gdb try5
+    	(gdb) break 6
+    	Breakpoint 1 at 0x80483f6: file try5.c, line 6.
+    </code>
+    </pre>
+
+    <p>Wasn't that easy?   You can also set breakpoints with a function name:</p>
+
+    <p>(gdb) break display</p>
+    <code class="demo">Breakpoint 2 at 0x804841a: file try5.c, line 15.</code>
+
+    <p>Disable the 1st breakpoint, and then look at what you've done:</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) disable 1
+    	(gdb) info breakpoints
+    	Num Type           Disp Enb Address    What
+    	1   breakpoint     keep n   0x080483f6 in main at try5.c:6
+    	2   breakpoint     keep y   0x0804841a in display at try5.c:15
+    </code>
+    </pre>
+
+    <p>Now run the program.  Remember, breakpoint 1 is disabled, so it'll stop at line 15.</p>
+
+    <pre class="demo">
+    <code>
+       (gdb) run
+       Starting program: /www/p/linux/gdb/try5
+
+       Breakpoint 2, display (x=3) at try5.c:15
+       15              for (i=0; i&lt;x; ++i) {
+       (gdb)
+    </code>
+    </pre>
+
+    <p>
+        We've seen 2 ways to set a breakpoint.  Now here's a third.  To set a breakpoint 2 lines down from the current line, use
+        <code>break +2</code>.  Similarly, you can set a breakpoint 3 lines <em>up</em> from the current line by <code>break -3</code>.  Let's set
+        a breakpoint at line 18 and continue the execution.
+    </p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) break +3
+    	Breakpoint 3 at 0x8048450: file try5.c, line 18.
+    	(gdb) continue
+    	Continuing.
+    	i is 0.
+    	i is 1.
+    	i is 2.
+
+    	Breakpoint 3, display (x=5) at try5.c:18
+    	18      }
+    	(gdb)
+    </code>
+    </pre>
+
+    <p>Go ahead and quit gdb to prepare for the next section.</p>
+
+    <a name="settingbreakpointsinmultiplefileprograms"><h2>Setting Breakpoints In Multiple File Programs</h2></a>
+
+    <p>How do we set breakpoints when a program spans multiple files?</p>
+
+    <p>
+        For the form <code>break linenumber</code>, there is an ambiguity when you have a multiple file program.  The line number of
+        which file?  The answer is that by default, the line number is taken as a line number in whatever file holds <code>main()</code>.
+        That is certainly a reasonable default!  But what if we wanted to break on line 5 of a different file?  This gives a 4th form
+        for the break command:
+    </p>
+
+    <code class="demo">break <em>filename:linenumber</em></code>
+
+    <p>
+        This command will break on line <em>linenumber</em> of the source code file named <em>filename</em>.  For example, <code>break
+        MyFuncs.c:102</code> will break on line 102 of the source code file MyFuncs.c.  There's a 5th form:
+    </p>
+
+    <code class="demo">break <em>filename:function</em></code>
+
+    <p>
+        For example, <code>break MyFuncs.c:MyPrintFunction</code>.  But unless you're using overloaded function names (you've defined a
+        function multiple times), this is superfluous since you're not allowed (in C) to have 2 definitions belonging to the same
+        function name.
+    </p>
+
+    <a name="advancedbreaking"><h2>Advanced Breaking</h2></a>
+
+    <p>
+        If you're trying to debug a program that doesn't have debugging info compiled into the executable, you can't set breakpoints
+        by line number or function name.  Instead you have to specify where to break by giving a memory address.  This gives us a 6th
+        form:
+    </p>
+
+    <code class="demo">break *<em>address</em></pre>
+
+    <p>Since I know next to nothing about this, I'll move right along...</p>
+
+    <p>
+        The <code>break</code> command without any argument gives a 7th form (only one more to go).  It sets a break point at the very
+        next instruction.  Look at try5 again (having one eye on the source code will help here).
+    </p>
+
+    <pre class="demo">
+    <code>
+    	1    $ gdb try5
+    	2    (gdb) break display
+    	3    Breakpoint 1 at 0x804841a: file try5.c, line 15.
+    	4    (gdb) run
+    	5    Starting program: /www/p/linux/gdb/try5
+    	6
+    	7    Breakpoint 1, display (x=5) at try5.c:15
+    	8    15              for (i=0; i&lt;x; ++i) {
+    	9    (gdb) next
+    	10   16                 printf("i is %d.\n", i);
+    	11   (gdb) print i
+    	12   $1 = 0
+    	13   (gdb) break
+    	14   Breakpoint 2 at 0x8048430: file try5.c, line 16.
+    	15   (gdb) continue
+    	16   Continuing.
+    	17   i is 0.
+    	18
+    	19   Breakpoint 2, display (x=5) at try5.c:16
+    	20   16                 printf("i is %d.\n", i);
+    	21   (gdb) print i
+    	22   $2 = 1
+    </code>
+    </pre>
+
+    <p>
+        The astute reader will wonder why, on line 22, <code>i</code> has the value of 1 and not 0.  We set the breakpoint on line
+        13 when <code>i</code> had the value of 0.  But the very next instruction (which is where we set the breakpoint) was just a
+        <code>printf</code> statement (source code line 16).  How in blazes did the <code>printf</code> increment the value of <code>i</code>?
+        <p>Here's the answer.  Once gdb stops at a breakpoint, it will ignore all other breakpoints until one line of instruction
+        has executed.  Why does it do this?  If this weren't the case, everytime you stopped at a breakpoint, you'd have to
+        disable that breakpoint to resume execution--you wouldn't be able to get past that breakpoint!  If this doesn't make
+        sense to you, think about it for awhile.  If you still can't get it, don't worry.  It's a minor point.
+    </p>
+
+    <p>
+        There's one more use for breakpoint form 7, the <code>break</code> command with no arguments.  If you change to a higher
+        frame, use <code>break</code> and then continue:
+    </p>
+    <pre class="demo">
+    <code>
+    	$ gdb try5
+    	(gdb) break display
+    	Breakpoint 1 at 0x804841a: file try5.c, line 15.
+    	15              for (i=0; i&lt;x; ++i) {
+    	(gdb) backtrace
+    	#0  display (x=3) at try5.c:15
+    	#1  0x8048409 in main () at try5.c:8
+    	#2  0x4003e46b in __libc_start_main () from /lib/libc.so.6
+    	(gdb) frame 1
+    	#1  0x8048409 in main () at try5.c:8
+    	8          display(x);
+    	(gdb) break
+    	Breakpoint 2 at 0x8048409: file try5.c, line 8.
+    	(gdb) continue
+    	Continuing.
+    	i is 0.
+    	i is 1.
+    	i is 2.
+
+    	Breakpoint 2, 0x8048409 in main () at try5.c:8
+    	8          display(x);
+    	(gdb)
+    </code>
+    </pre>
+
+    <p>
+        Can you see what happened here?  We stopped at the top of <code>display()</code>, frame 0.  We then switched to the frame 1
+        (<code>main()</code>) and issued the <code>break</code> command.  This set a breakpoint at the very next instruction <em>after</em> the
+        call to <code>display()</code>.  We then continued execution, and the program ran until it hit the very next instruction after
+        <code>display()</code>.  In essence, we set the breakpoint so that execution would halt after <code>display()</code> returned.   Make
+        sense?
+    </p>
+
+    <p>
+        To reiterate, the 7th form of breakpoint is used for loops when you're in the top most frame and returns from functions
+        when you're not in the top most frame.  Frankly, I don't find this terribly useful.  When in a loop, I think the
+        <code>break <em>+offset</em></code> or <code>break <em>linenumber</em></code> is more convenient.  For returning from functions, I
+        find the <code>finish</code> command more useful (which you'll learn about shortly).
+    </p>
+
+    <p>
+        The 8th and last form of break command is the conditional breakpoint.  They are quite useful but little understood.
+        Perhaps part of the reason is that the gdb User Manual does a really poor job explaining them.  Here is the form:
+    </p>
+
+    <code class="demo">break ... if <em>cond</em></code>
+
+    <p>
+        where <code>...</code> represents any one of the previous 7 forms of breakpoints we've learned about already and <em>cond</em> is
+        any conditional in the language you're using.  Here is an example:
+    </p>
+
+    <pre class="demo">
+    <code>
+    	$ gdb try5
+    	(gdb) break 16 if i==2
+    	Breakpoint 1 at 0x8048430: file try5.c, line 16.
+    	(gdb) r
+    	Starting program: /www/p/linux/gdb/try5
+    	i is 0.
+    	i is 1.
+
+    	Breakpoint 1, display (x=3) at try5.c:16
+    	16                 printf("i is %d.\n", i);
+    </code>
+    </pre>
+
+    <p>
+        We used the 1st form of break with the conditional <em>i==2</em>.  We could've also used a test for inequality, like
+        <em>i!=2</em> or <em>i&gt;2</em>.  This is mega useful when you're inside of a loop that's going to repeat a million times.  The 8th
+        form of break is your friend!
+    </p>
+
+    <a name="summaryofbreakpoints"><h2>Summary Of Breakpoints</h2></a>
+
+    <table>
+    <tr><td>Form 1:</td><td>break <em>linenumber</em></td><td>Set a breakpoint at line number <em>linenumber</em></td></tr>
+    <tr><td>Form 2:</td><td>break <em>function</em></td><td>Set a breakpoint at function <em>function</em>.</td></tr>
+    <tr><td>Form 3:</td><td>break <em>filename</em>linenumber<em></td><td>Set a breakpoint at line <em>linenum</em> in source file <em>filename</em>.</td></tr>
+    <tr><td>Form 4:</td><td>break <em>*address</em></td><td>Set a breakpoint at address &lt;<em>address</em>&gt;.  Use this to
+    set breakpoints in parts of a program that doesn't have debugging information or source files.</td></tr>
+    </table>
+
+    <br>
+
+    <a name="deletingbreakpoints"><h2>Deleting Breakpoints</h2></a>
+
+    <p>Here are the commands used to delete breakpoints you've set when they've outlived their usefulness.</p>
+
+    <table>
+    <tr><td>clear &lt;<em>function</em>&gt;</td>
+    	<td>Clear any breakpoints set at the entry to the function &lt;<em>function</em>&gt;.</td></tr>
+    <tr><td>clear &lt;<em>filename</em>&gt;&lt;<em>function</em>&gt;</td>
+    	<td>Clear any breakpoints set at the entry to the function &lt;<em>function</em>&gt; defined in the source code file
+    	&lt;<em>filename</em>&gt;.</td></tr>
+    <tr><td>clear &lt;<em>linenum</em>&gt;</td>
+    	<td>Clear any breakpoints set at line &lt;<em>linenum</em>&gt; of the current source file.  The current source file is
+    	the last file whose text was printed. </td></tr>
+    <tr><td>clear &lt;<em>filename:linenum</em>&gt;</td>
+    	<td>Clear any breakpoints at line &lt;<em>linenum</em>&gt; in file &lt;<em>filename</em>&gt;.</td></tr>
+    <tr><td>delete</td>
+    	<td>Clear all breakpoints.</td></tr>
+    <tr><td>delete <em>n</em></td>
+    	<td>Each breakpoint is assigned a number starting with 1.  This clears breakpoint <em>n</em>.</td></tr>
+    </table>
+    <hr><p><br /><p>
+
+    <a name="inspectingvariables"><h2>Inspecting Variables</h2></a>
+
+    <p>
+        Note to Fortran users: All Fortran variables must be in lowercase, regardless of how they were capitalized in your source
+        code.  This is because the Fortran standard specifies case independence when it comes to variables.  Yes, variable <code>C</code> is
+        variable <code>c</code> in the Fortran standard.  There are compilers out there that allow you to use case dependent variables, but
+        this is non-standard, and gcc mandates all lowercase variables.  This was done to support legacy code.  Sigh.
+    </p>
+
+    <p>
+        The whole purpose of setting a breakpoint or watchpoint is to see what's going on with your variables, so let's take a look
+        at inspecting your variables.  You can print the data type of a variable using the <code>ptype</code> command.  Here are some
+        examples:
+    </p>
+
+    <pre class="demo">
+    <code>
+       (gdb) ptype argc
+       type = int
+       (gdb) ptype myfloat
+       type = float
+       (gdb) ptype argv
+       type = char **
+       (gdb) ptype mystring
+       type = unsigned char *
+       (gdb) pt myIntArray
+       type = int [10]
+    </code>
+    </pre>
+
+    <p>You can even use ptype to look at structures.  Take, for example, the fstat structure defined in sys/stat.h.</p>
+
+    <pre class="demo">
+    <code>
+       (gdb) ptype fstat
+       type = struct stat {
+           __dev_t st_dev;
+           short unsigned int __pad1;
+           __ino_t st_ino;
+           __mode_t st_mode;
+           __nlink_t st_nlink;
+           __uid_t st_uid;
+           __gid_t st_gid;
+           __dev_t st_rdev;
+           short unsigned int __pad2;
+           __off_t st_size;
+           long unsigned int st_blksize;
+           __blkcnt_t st_blocks;
+           __time_t st_atime;
+           long unsigned int __unused1;
+           __time_t st_mtime;
+           long unsigned int __unused2;
+           __time_t st_ctime;
+           long unsigned int __unused3;
+           long unsigned int __unused4;
+           long unsigned int __unused5;
+       }
+    </code>
+    </pre>
+
+    <p>That's quite a structure!  You can abbreviate <code>ptype</code> by <code>pt</code>.</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) pt mydouble<br>
+    	type = double<br>
+    </code>
+    </pre>
+
+    <p>Remember, you can only print the data type of a variable which is defined in the currently selected frame.</p>
+
+    <p>
+        Now that you know how to print the data type of your variables, you may want to print their values.  Consider the
+        following program (which will be compiled via <code>gcc -g filename</code>):
+    </p>
+
+    <pre class="code">
+    <code>
+    1   #include&lt;stdio.h&gt;
+    2   #include&lt;string.h&gt;
+    3
+    4   int main( int argc, char *argv[] )
+    5   {
+    6        double mydouble = 3.14 / 3;
+    7        float  myfloat  = 3.3;
+    8        char   mychar   = 'A';
+    9        int    myIntArray[10];
+    10       int    MyNegativeInt = -1;
+    11       char   myString[20];
+    12
+    13       struct foo {
+    14            char *name;
+    15            int  EyeColour;
+    16       } myStruct;
+    17
+    18       strncpy(myString, "hello", 19);
+    19
+    20       for ( int i = 0; i &lt; 10; i++ )
+    21            myIntArray[i] = i;
+    22
+    23       return 0;
+    24  }
+    </code>
+    </pre>
+
+    <p>You can view the value of a variable using the <code>print</code> command.</p>
+
+    <pre class="demo">
+    <code>
+       (gdb) print i
+       $4 = -1073744780
+    </code>
+    </pre>
+
+    <p>
+        I stopped the program right before the for loop, so this is what variable <code>i</code> is before it gets initialized.  gdb
+        prints the value of the variable which is most `comfortable' (to borrow fortran 99 lingo) with the datatype.  In other words,
+        floats get printed as floats:
+    </p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) print myfloat
+    	$1 = 3.29999995
+    </code>
+    </pre>
+
+    <p>and doubles get printed as doubles:</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) print mydouble
+    	$1 = 1.0466666666666666
+    </code>
+    </pre>
+
+    <p>and chars get printed as chars:</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) print mychar
+    	$1 = 65 'A'
+    </code>
+    </pre>
+
+    <p>By the way, you can use the abbreviation <code>p</code> for <code>print</:</p>
+
+    <pre class="demo">
+        <code>
+    	(gdb) p argc
+    	$1 = 1
+    </code>
+    </pre>
+
+    <p>
+        You may be wondering what the numbers preceeded by $ (like $1 or $3) mean.   They're kind of like a variable history.
+        Everytime you print any variable, the <code>$n</code> gets incremented by 1.   $ by itself refers to the last variable you printed
+        and $n refers to the n'th variable you printed.  Look at the following example to see this:
+    </p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) p mychar
+    	$26 = 65 'A'
+    	(gdb) p mydouble
+    	$27 = 1.0466666666666666
+    	(gdb) p $
+    	$28 = 1.0466666666666666
+    	(gdb) p $27
+    	$29 = 1.0466666666666666
+    	(gdb) p $26
+    	$30 = 65 'A'
+    </code>
+    </pre>
+
+    <p>
+        You can even typecast a variable when you print it!  Here's <code>MyNegativeInt</code> as an int, char and double
+        respectively:
+    </p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) p MyNegativeInt
+    	$41 = -1
+    	(gdb) p (char) MyNegativeInt
+    	$42 = -1 'ÿ'
+    	(gdb) p (double) MyNegativeInt
+    	$43 = -1
+    </code>
+    </pre>
+
+    <p>The possibilities are endless.  But wait, there's more!</p>
+
+    <a name="inspectingarraysandstructures"><h2>Inspecting Arrays And Structures</h2></a>
+
+    <p>
+        Printing array values is much the same as printing other variables.  gdb still uses the concept of being `comfortable'.  In
+        other words, when you print an array, that's exactly what you get!  From the code snippet of the previous section:
+    </p>
+
+    <pre class="demo">
+    <code>
+       (gdb) p myIntArray
+       $46 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+   </code>
+    </pre>
+
+    <p>Of course, gdb knows how to access elements of an array:</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) pt myIntArray
+    	type = int [10]
+    	(gdb) pt myIntArray[3]
+    	type = int
+    	(gdb) p myIntArray[3]
+    	$48 = 3
+    </code>
+    </pre>
+
+    <p>
+        You can do kind of advanced stuff too -- things that you'd expect from only Perl :-).   Here's how you print 5 elements of
+        myIntArray, starting at element 3:
+    </p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) p myIntArray[3]@5
+    	$49 = {3, 4, 5, 6, 7}
+    </code>
+    </pre>
+
+    <p>
+        GDB will not, however, check bounds of the array.  Previously we defined <code>myIntArray</code> as an array of 10 ints.  Let's
+        see what happens when we try printing 4 ints past the end of the array:
+    </p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) p myIntArray[3]@11
+    	$54 = {3, 4, 5, 6, 7, 8, 9, 10, 1107293224, 1079194419, -1947051841}
+    </code>
+    </pre>
+
+    <p>Doh!  Hopefully, that's not someone's password.  :-).    You can also print structures:</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) p myStruct
+    	$2 = {name = 0x40014978 "Miles Davis", EyeColour = 1}
+    </code>
+    </pre>
+
+    <p>
+        However, this might get out of hand for very large structs.  You can set pretty printing of structures by <code>set print
+        pretty</code>
+    </p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) set print pretty
+    	(gdb) p myStruct
+    	$4 = {
+    	  name = 0x40014978 "Miles Davis",
+    	  EyeColour = 1
+    	}
+    	(gdb)
+    </code>
+    </pre>
+
+    <p>or, if you only want one of the elements of the structure, you can print it in the way that would seem obvious:</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) print myStruct.name
+    	$6 = 0x40014978 "Miles Davis"
+    </code>
+    </pre>
+
+    <p>this works too, but why is a mystery to me:</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) print myStruct-&gt;name
+    	$15 = 0x40014978 "Miles Davis"
+    </code>
+    </pre>
+
+    <a name="advancedinspection"><h2>Advanced Inspection</h2></a>
+
+    <p>You can print things using a format specifier:</p>
+
+    <code class="demo">print /FMT variable</code>
+
+    <p>Where FMT is:</p>
+
+    <center><table cellpadding=3>
+    <tr><td>o</td><td>octal           </td><td> </td><td>x</td><td>hex  </td><td></td><td>d</td><td>decimal</td><td></td>
+        <td>u</td><td>unsigned decimal</td><tr>
+    <tr><td>t</td><td>binary</td><td></td><td>f</td><td>float</td><td></td><td>a</td><td>address</td><td></td>
+        <td>c</td><td>char </td></tr>
+    </table></center>
+
+    <p>Here's some examples of printing some of our variables using a format specifier:</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) p mychar
+    	$33 = 65 'A'
+    	(gdb) p /o mychar
+    	$34 = 0101
+    	(gdb) p /x mychar
+    	$35 = 0x41
+    	(gdb) p /d mychar
+    	$36 = 65
+    	(gdb) p /u mychar
+    	$37 = 65
+    	(gdb) p /t mychar
+    	$38 = 1000001
+    	(gdb) p /f mychar
+    	$39 = 65
+    	(gdb) p /a mychar
+    	$40 = 0x41
+    </code>
+    </pre>
+
+    <p>
+        By the way, memory addresses in gdb are printed in hex by default.  Therefore, <code>p /a mychar</code> prints mychar interpreted
+        as an address, the hexidecimal representation of 65.  This is very different from the address of mychar!
+    </p>
+
+    <p>
+        Speaking of the address of mychar, one would expect that since C loves pointers, gdb would love pointers too.  And in fact,
+        it does!  Printing the address of mychar is obvious to C programmers (sorry, Fortran users!):
+    </p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) p &amp;mychar
+    	$42 = 0xbffff41b "A33S@¿Xò\213%¿ð?Hôÿ¿\023â\003@\001"
+    </code>
+    </pre>
+
+    <p>gdb even knows about the dereference operator.  How's this for being perverse?</p>
+
+    <pre class="demo">
+    <code>
+    	(gdb) p *(&amp;mychar)
+    	$43 = 65 'A'
+    </code>
+    </pre>
+
+    <p>
+        This is the perfect vehicle for teaching students what a pointer is.  We're dereferencing the address of mychar.  Of course,
+        there's more to this than just coolness (although it's worth it for the coolness factor alone!).  I was writing a curses program
+        once and it kept segfaulting on me whenever I tried drawing to a WINDOW object.  By looking at the address of a WINDOW that I
+        was passing to a function, I determined that I was passing a WINDOW by value, drawing to a local copy of the WINDOW and
+        returning.  Of course, the local copy of the WINDOW wasn't anything initialized by curses so drawing to it was causing a
+        segmentation violation.  Looking at the code, it was highly non-obvious what was was going on; it looked just swell!  It wasn't
+        until I compared the address of the passed WINDOW with the address of the received WINDOW that I discovered the big oops!
+    </p>
+
+    <p>
+        Furthermore, who here is guilty of buffer overruns?  Be truthful!  It's very easy to fall into the `off by one' error when
+        you initialize, write to or read from a C array.  How many times have you used strcpy when you should've used strncpy?  These
+        errors are insidious because they usually don't crash the program, but manifest themselves in wierd behavior in certain rare
+        cases that are hard to track down.  Looking at the addresses of what's going on is a sure fire way of finding out the details of
+        what's going on.
+    </p>
+
+    <a name="changingvariables"><h2>Changing Variables</h2></a>
+
+    <p>
+        There are two ways you can change the value of a variable in gdb.  Let's change the value of <code>double myvariable</code> to
+        10.0.  Firstly, you can use the <code>set</code> command:
+    </p>
+
+    <code class="demo">set myvariable = 10.0</code>
+
+    <p>
+        which is the `quiet' way.  gdb will simply set <code>myvariable</code> to 10 without printing anything.  Then there's the `noisy'
+        way using the print command:
+    </p>
+
+    <code class="demo">print myvariable = 10.0</code>
+
+    <p>
+        which will set <code>myvariable</code> to 10.0 and then print this new value to the screen.  The <code>print</code> command ends up
+        being less keystrokes because you can use the abbreviation <code>p</code> for <code>print</code>.
+    </p>
+
+    <p>
+        Remember, you can only change the value of a variable which is defined within the current context.  Make sure the variable
+        you want to change is defined in the currently selected frame.  If it's not, you need to set the frame before you can change the
+        variable.
+    </p>
+
+    <a name="steppingthroughyourprogram"><h2>Stepping through your program</h2></a>
+
+    <p>
+        One thing that is good to know is the exact sequence of execution of your program, especially through loops and conditional
+        branches. If the program is not too large, you can follow it easily by executing one line at a time.
+    </p>
+
+    <p>There are two commands used to step through your program:</p>
+
+    <dl>
+    <dt><strong>step</strong>:
+    <dd>Execute a single line in the program.  If the current statement calls a function, the function is single stepped.
+    <dt><strong>next</strong>:
+    <dd>Execute a single line in the program but treat function calls as a single line.  This command is used to skip over function calls.
+    </dl>
+
+    <p>Since C statements like <code>printf()</code> and <code>scanf()</code> are functions themselves, if you <em>step</em> through all your
+    program (as opposed to <em>next</em>, you'll find yourself stepping through glibc, the standard C library (which is probably
+    <em>not</em> what you want!).  Good debugging makes use of <code>next</code> mostly.  If you really want to step through a function
+    call, it's best to set a breakpoint there and then you can use <code>next</code> from inside the function.</p>
+
+    <p>To execute the next statement, type:</p>
+
+    <code class="demo">step</code>
+
+    <p>
+        Each time you type a <em>step</em> command, gdb will then list the line that it is about to execute, with the line number on
+        the left, so you can see what's about to happen before it happens.
+    </p>
+
+    <a name="findingoutwhereyouareandlistingsourcecode"><h2>Finding out where you are and listing source code</h2></a>
+
+    <p>To find out where you are at any time, type the command:</p>
+
+    <code class="demo">where</code>
+
+    <p>This will show you the current line number.  For example, a line like this:</p>
+
+    <code class="demo">#0  foo () at foo.f:12</code>
+
+    <p>
+        shows that the execution of our program is currently at a location that corresponds to line 12 in the Fortran
+        source file, foo.f.
+    </p>
+
+    <p>You can display a few lines of your source program around the current location by using the command:</p>
+
+
+    <code class="demo">list</code>
+
+    <p>
+        This will list 10 lines of source roughly centred on your current line number.  If you haven't started to debug yet, it will
+        list the first 10 lines of source code.  If you type list again, it'll print the next 10 lines of source code.  You can also
+        type:
+    </p>
+
+    <code class="demo">list 25</code>
+
+    <p>
+        and this will list 10 lines of source code centred on line 25.  Typing list again will list the next 10 lines of source code.
+        You can also specify a range of lines to be listed. For example, to list lines 10 through 24 in the current program, you'd
+        type:
+    </p>
+
+    <code class="demo">list 10,24</code>
+
+    <p>
+        If there is a function in your program named <code>endpoints()</code>, you can list 10 lines centred on the start of
+        <code>endpoints()</code> by:
+    </p>
+
+    <code class="demo">list endpoints</code>
+
+    <p>If you're listing lines and decide you want to see the 10 lines previous to the 10 lines you just displayed:</p>
+
+    <code class="demo">list -</code>
+
+    <p>Suppose you set a breakpoint:</p>
+
+    <code class="demo">break 55</code>
+
+    <p>and gdb responds with:</p>
+
+    <code class="demo">Breakpoint 1 at 0x8048540: file program3.c, line 55.</code>
+
+    <p>
+        You can list the lines centred around that address by specifying the asterisk (for address).  It will list the 10 lines
+        centred around the source code line containing that address.
+    </p>
+
+    <code class="demo">list *0x8048540</code>
+
+</section>
+
+<p>&nbsp;</p><br /><hr /><table width="100%"><tr><td width="33%" align="left"><img src="http://www.dirac.org/linux/gdb/inclusions/icons/prev.png" alt="back"/> &nbsp; Back: <a href="04-Breakpoints_And_Watchpoints.html">Breakpoints And Watchpoints</a></td><td align="left"><img src="http://www.dirac.org/linux/gdb/inclusions/icons/up.png" alt="up" />   &nbsp;<a href="http://www.dirac.org/linux/gdb">Up</a> to the TOC</td><td align="right">Next: <a href="06-Debugging_A_Running_Process.html">Debugging A Running Process</a> &nbsp; <img src="http://www.dirac.org/linux/gdb/inclusions/icons/next.png" alt="next" /></td></tr><tr><td></td><td align="left"><img src="http://www.dirac.org/linux/gdb/inclusions/icons/email.png" alt="email" /> &nbsp;<a href="mailto:p@dirac.org">Email</a> comments and corrections<br /></td></tr><tr><td></td><td align="left"><img src="http://www.dirac.org/linux/gdb/inclusions/icons/printable.png" alt="printable" /> &nbsp;<a href="05-Stepping_And_Resuming.html?printable=yes">Printable</a> version</td><td></td></tr></table>
 	<br />
 	</body>
 	</html>
